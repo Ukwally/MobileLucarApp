@@ -1,0 +1,208 @@
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, StatusBar, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import MIcon from 'react-native-vector-icons/MaterialIcons';
+import FIcon from 'react-native-vector-icons/FontAwesome';
+import { useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+
+const localImage = require('./assets/logo.png'); 
+
+const VisualizarDados = () => {
+  const navigation = useNavigation(); 
+  const route = useRoute();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { extractedText } = route.params || {};
+  const { endpoint } = route.params || {}; 
+
+  useEffect(() => {
+    if (endpoint && extractedText) {
+      fetch(`${endpoint}?extractedText=${encodeURIComponent(extractedText)}`)
+        .then(response => response.json())
+        .then(data => {
+          setData(data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Erro ao buscar dados:', error);
+          setError(error);
+          setLoading(false);
+        });
+    }
+  }, [endpoint, extractedText]);
+
+  if (loading) {
+    return (
+      <View style={styles.msgConsulta}>
+        <ActivityIndicator size="large" color="#a9cce3"/>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.msgConsulta}>
+        <Text>Erro ao carregar dados!</Text>
+      </View>
+    );
+  }
+
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <TouchableOpacity>
+        <View style={styles.cardImageA}>
+          <MIcon name="person" size={30} color="#a9cce3" />
+        </View>
+      </TouchableOpacity>
+      <View style={styles.textContainer}>
+        <Text style={styles.cardTitle}>{item.descricao}</Text>
+        <Text style={styles.cardContent}>Objetivo: {item.objectivo}</Text>
+      </View>
+      <View style={styles.iconWrapper}>
+        <TouchableOpacity style={styles.iconContainer}>
+          <MIcon name="history" size={30} color="#a9cce3" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content"/>
+      <View style={styles.header}>
+        <Image
+          source={require('./assets/logo.png')}
+          style={styles.headerImage}
+        />
+        <TouchableOpacity>
+          <MIcon name="menu" size={30} color="#FFFFFF" />
+        </TouchableOpacity>
+      </View>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.container}>
+          <Text style={styles.text}>Texto extraído: {extractedText || "Nenhum texto extraído"}</Text>
+        </View>
+        {data && data.length > 0 ? (
+          data.map(item => (
+            <View key={item.Matricola}>
+              <View style={styles.card}>
+                <TouchableOpacity>
+                  <View style={styles.cardImageA}>
+                    <MIcon name="person" size={30} color="#a9cce3" />
+                  </View>
+                </TouchableOpacity>
+                <View style={styles.textContainer}>
+                  <Text style={styles.cardTitle}>{item.Nome}</Text>
+                  <Text style={styles.cardContent}>BI:{item.NumeroBI}</Text>
+                </View>
+                <View style={styles.iconWrapper}>
+                  <TouchableOpacity style={styles.iconContainer}>
+                    <MIcon name="more" size={30} color="#a9cce3" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.card2}>
+                <View style={styles.card2Header}>
+                  <TouchableOpacity>
+                    <View style={styles.cardImageA}>
+                      <FIcon name="car" size={30} color="#a9cce3" />
+                    </View>
+                  </TouchableOpacity>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.cardContent}>MAT: {item.Matricola}</Text>
+                  </View>
+                  <View style={styles.iconWrapper}>
+                    <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('VisualizarHistorico')}>
+                      <MIcon name="history" size={30} color="#a9cce3" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={styles.card2Body}>
+                  <View>
+                    <Text>Marca: {item.Marca}</Text>
+                    <Text>Modelo: {item.Modelo}</Text>
+                    <Text>Ano: {item.Ano}</Text>
+                    <Text>Cor: {item.Cor}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ))
+        ) : (
+          <View style={styles.noDataContainer}>
+            <Text style={styles.noDataText}>Nenhum dado disponível.</Text>
+          </View>
+        )}
+        <Text style={styles.contentText}>Conteúdo da Tela</Text>
+      </ScrollView>
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Rodapé</Text>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  // Adicione aqui seus estilos
+});
+
+export default VisualizarDados;
+
+
+___________________
+
+SERVER
+___________________
+
+const express = require('express');
+const mysql = require('mysql');
+const app = express();
+const port = 3000;
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'lucar'
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error('Erro ao conectar ao banco de dados:', err);
+    return;
+  }
+  console.log('Lucar Conectado ao banco de dados');
+});
+
+app.use(express.json());
+
+app.get('/data', (req, res) => {
+  const { extractedText } = req.query;
+  if (!extractedText) {
+    return res.status(400).send('Parâmetro extractedText é necessário');
+  }
+
+  const query = `
+    SELECT v.Matricola, v.Marca, v.Modelo, v.Ano, v.Cor, p.ProprietarioID, c.NumeroBI, c.Nome, c.Endereco, c.DataNascimento
+    FROM viatura v
+    JOIN propriedade pr ON v.Matricola = pr.Matricola
+    JOIN proprietario p ON pr.ProprietarioID = p.ProprietarioID
+    JOIN cidadao c ON p.NumeroBI = c.NumeroBI
+    WHERE v.Matricola = ? AND pr.DataFim IS NULL
+  `;
+
+  db.query(query, [extractedText], (err, results) => {
+    if (err) {
+      console.error('Erro na consulta ao banco de dados:', err);
+      res.status(500).send('Erro ao consultar o banco de dados');
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Servidor rodando em http://localhost:${port}`);
+});
