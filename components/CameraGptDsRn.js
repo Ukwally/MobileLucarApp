@@ -1,13 +1,26 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Alert, PermissionsAndroid, Platform } from 'react-native';
-import { Camera, useCameraDevices } from 'react-native-vision-camera';
-import { useScanBarcodes, BarcodeFormat } from 'vision-camera-code-scanner';
+import React, { useRef, useEffect } from 'react';
+import {View,TouchableOpacity,Text,StyleSheet,Alert,PermissionsAndroid,Platform,} from 'react-native';
+import { RNCamera } from 'react-native-camera';
 
 const CustomCameraScreen = ({ onCapture }) => {
   const cameraRef = useRef(null);
-  const devices = useCameraDevices();
-  const device = devices.back;
-  const [hasPermission, setHasPermission] = useState(false);
+
+  const handleCapture = async () => {
+    if (cameraRef.current) {
+      try {
+        const options = { quality: 0.5, base64: true };
+        const data = await cameraRef.current.takePictureAsync(options);
+        console.log(data); // Verifique os dados retornados
+        onCapture(data.uri);
+      } catch (error) {
+        console.error(error); // Verifique o erro real
+        Alert.alert('Erro', 'Não foi possível capturar a imagem');
+      }
+    } else {
+      Alert.alert('Erro', 'Câmera não está carregada');
+    }
+  };
+  
 
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
@@ -22,12 +35,7 @@ const CustomCameraScreen = ({ onCapture }) => {
 
       if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
         Alert.alert('Permissão necessária', 'Você deve permitir o acesso à câmera');
-      } else {
-        setHasPermission(true);
       }
-    } else {
-      const status = await Camera.requestCameraPermission();
-      setHasPermission(status === 'authorized');
     }
   };
 
@@ -35,34 +43,13 @@ const CustomCameraScreen = ({ onCapture }) => {
     requestPermissions();
   }, []);
 
-  const handleCapture = async () => {
-    if (cameraRef.current) {
-      try {
-        const photo = await cameraRef.current.takePhoto({
-          qualityPrioritization: 'quality',
-          flash: 'off',
-        });
-        onCapture(photo.path);
-      } catch (error) {
-        Alert.alert('Erro', 'Não foi possível capturar a imagem');
-      }
-    } else {
-      Alert.alert('Erro', 'Câmera não está carregada');
-    }
-  };
-
-  if (device == null || !hasPermission) {
-    return <View style={styles.container} />;
-  }
-
   return (
     <View style={styles.container}>
-      <Camera
+      <RNCamera
         ref={cameraRef}
         style={styles.camera}
-        device={device}
-        isActive={true}
-        photo={true}
+        type={RNCamera.Constants.Type.back}
+        captureAudio={false}
       />
       <View style={styles.controls}>
         <TouchableOpacity
