@@ -15,6 +15,7 @@ const VisualizarDados = () => {
   const navigation = useNavigation();
 
   const route = useRoute();
+  const [dadosRoubada, setDadosRoubada] = useState(null); // ou false
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,7 +39,7 @@ const VisualizarDados = () => {
     }
   };
   
-  useEffect(() => {
+ /* useEffect(() => {
     if (endpoint) {
       fetch(endpoint)
         .then(response => response.json())
@@ -52,7 +53,39 @@ const VisualizarDados = () => {
           setLoading(false);
         });
     }
-  }, [endpoint]);
+  }, [endpoint]);*/
+
+  useEffect(() => {
+    const fetchViaturas = async () => {
+      try {
+        const res = await fetch(endpoint);
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        setError(err);
+      }
+    };
+  
+    const fetchRoubadas = async () => {
+      try {
+        const res = await fetch(`http://192.168.43.22:3000/viaturas-roubadas/${extractedText}`);
+        const json = await res.json();
+        setDadosRoubada(json.length > 0);
+      } catch (err) {
+        setError(err);
+      }
+    };
+  
+    const fetchAll = async () => {
+      await Promise.all([fetchViaturas(), fetchRoubadas()]);
+      setLoading(false);
+    };
+  
+    if (endpoint && extractedText) {
+      fetchAll();
+    }
+  }, [endpoint, extractedText]);
+  
 
   if (loading) {
     return (
@@ -80,8 +113,12 @@ const VisualizarDados = () => {
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>        
+          {dadosRoubada ? (
+          <Text style={styles.dadosRoubada}>VIATURA ROUBADA</Text>
+          ):(
+            <Text style={styles.textoCamecalho}>VIATURA PESQUISADA: {extractedText || "Nenhum texto extraído"}</Text>
+          )}
         <View>
-          <Text style={styles.textoCamecalho}>VIATURA PESQUISADA: {extractedText || "Nenhum texto extraído"}</Text>
         </View>
         {data && data.length > 0 ? (
           data.map(item => (
@@ -171,6 +208,14 @@ const styles = StyleSheet.create({
   textoCamecalho:{
     color:'grey',
     marginTop:6,
+  },
+  dadosRoubada:{
+    color:'red',
+    marginTop:6,
+    backgroundColor: 'white',
+    width:'100%',
+    padding:10,
+    fontWeight:800,
   },
   container: {
     flex: 1,

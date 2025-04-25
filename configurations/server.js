@@ -7,7 +7,7 @@ const cors = require('cors'); // REMOVER
 const bcrypt = require('bcrypt');
 
 const app = express();
-const port = 3000; 
+const port = 3000;
 
 
 // Middlewares
@@ -29,6 +29,22 @@ db.connect((err) => {
   }
   console.log('Lucar Conectado ao banco de dados');
 });
+
+//conectar-se o uto banco
+const dbDtser = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'externo_api'
+});
+dbDtser.connect((err) => {
+  if (err) {
+    console.error('Erro ao conectar ao banco externo_api:', err);
+    return;
+  }
+  console.log('Conectado ao banco de dados externo_api');
+});
+
 //CONSULA DADOS DA VIATURA
 app.get('/data/:matricola', (req, res) => {
   const matricola = req.params.matricola; // Captura o parâmetro da URL
@@ -53,7 +69,7 @@ app.get('/data/:matricola', (req, res) => {
 
 //CONSULTA HISTÓRICO
 app.get('/historico/:matricola', (req, res) => {
-  const matricola = req.params.matricola;  
+  const matricola = req.params.matricola;
   const query = `SELECT pr.Matricola, pr.DataInicio, pr.DataFim, pr.Id, pr.NumeroBI, c.Nome, c.Endereco
                FROM Propriedade pr
                JOIN Cidadao c ON pr.NumeroBI = c.NumeroBI
@@ -96,7 +112,7 @@ app.post('/login', (req, res) => {
 
 //CONSULTA CIDADAO
 app.get('/cidadao/:BI', (req, res) => {
-  const BI = req.params.BI;  
+  const BI = req.params.BI;
   const query = `SELECT *
                FROM cidadao
                WHERE NumeroBI = ?
@@ -112,8 +128,7 @@ app.get('/cidadao/:BI', (req, res) => {
   });
 });
 
-
-
+//API login
 app.post('/login', (req, res) => {
   const { userId, password } = req.body; // Captura os dados do corpo da requisição
 
@@ -139,25 +154,93 @@ app.post('/login', (req, res) => {
     console.log('Senha recebida:', password);
 
     // Verifica se a senha corresponde ao hash armazenado
-   // bcrypt.compare(password, user.password, (err, isMatch) => {
+    // bcrypt.compare(password, user.password, (err, isMatch) => {
     const hashStored = user.password.replace('$2y$', '$2a$');
     bcrypt.compare(password, hashStored, (err, isMatch) => {
-        if (err) {
-            console.error('Erro ao verificar a senha:', err);
-            res.status(500).send('Erro interno do servidor');
-            return;
-        }
+      if (err) {
+        console.error('Erro ao verificar a senha:', err);
+        res.status(500).send('Erro interno do servidor');
+        return;
+      }
 
-        if (isMatch) {
-            console.log('Login bem-sucedido');
-            res.status(200).send({ success: true, user });
-        } else {
-            console.log('Senha incorreta');
-            res.status(401).send({ success: false, message: 'Credenciais inválidas' });
-        }
+      if (isMatch) {
+        console.log('Login bem-sucedido');
+        res.status(200).send({ success: true, user });
+      } else {
+        console.log('Senha incorreta');
+        res.status(401).send({ success: false, message: 'Credenciais inválidas' });
+      }
     });
   });
 });
+
+
+
+
+
+
+//APARTIR DAQUI ESTÃO AS APIs EXTERNAS AO DTSER ( PARA CONSULTAR: CARTAS, VIATURAS ROUBADAS,  MULTAS )
+//API CONSULTA CARTAS (usando o banco externo_api)
+app.get('/cartas', (req, res) => {
+  const { numeroBI, numero_carta } = req.query;  // Captura os parâmetros passados na URL
+
+  if (!numeroBI && !numero_carta) {
+    return res.status(400).send('Por favor, forneça numeroBI ou numero_carta');
+  }
+
+  let query = 'SELECT * FROM cartas WHERE';
+  let queryParams = [];
+
+  if (numeroBI) {
+    query += ' numeroBI = ?';
+    queryParams.push(numeroBI);
+  }
+  if (numero_carta) {
+    if (numeroBI) {
+      query += ' OR';  // Se já existe o parametro numeroBI, fazemos a consulta por OR
+    }
+    query += ' numero_carta = ?';
+    queryParams.push(numero_carta);
+  }
+
+  // Executar a query no banco de dados
+  dbDtser.query(query, queryParams, (err, results) => {
+    if (err) {
+      console.error('Erro na consulta ao banco de dados:', err);
+      return res.status(500).send('Erro ao consultar o banco de dados');
+    }
+
+    if (results.length > 0) {
+      res.json(results);  // Retorna os resultados encontrados
+      console.log('CARTA encontrada')
+      console.log(results)
+    } else {
+      res.status(404).send('Nenhuma carta encontrada para o numeroBI ou numero_carta fornecido');
+    }
+  });
+});
+
+// API CONSULTAR VIATURAS ROUBADAS (usando o banco externo_api)
+app.get('/viaturas-roubadas/:matricula', (req, res) => {
+  const { matricula } = req.params;
+  const sql = `
+    SELECT * FROM viaturasroubadas
+    WHERE matricula = ?
+    LIMIT 1
+  `;
+
+  dbDtser.query(sql, [matricula], (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar ViaturasRoubadas:', err);
+      return res.status(500).json({ error: 'Erro ao buscar ViaturasRoubadas' });
+    }
+    res.json(results);
+  });
+});
+
+
+
+
 
 
 

@@ -200,6 +200,11 @@ const HomeS = ({route}) => {
           <Text style={styles.iconText}>Foto</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.iconContainer}   onPress={() => navigation.navigate('VisualizarCarta')}>
+          <FIcon name="search" size={30} color="#a9cce3" />
+          <Text style={styles.iconText}>Carta</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.iconContainer}   onPress={() => navigation.navigate('Ccamera', { NumeroBI: 20 })}>
           <FIcon name="microphone" size={30} color="#a9cce3" />
           <Text style={styles.iconText}>Áudio</Text>

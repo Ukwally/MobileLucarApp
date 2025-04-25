@@ -8,6 +8,7 @@ import HomeS from './pages/HomeS';
 import VisualizarDados from './pages/VisualizarDados'; 
 import VisualizarHistorico from './pages/VisualizarHistorico'; 
 import VisualizarCidadao from './pages/VisualizarCidadao';
+import VisualizarCarta from './pages/VisualizarCarta';
 import Ccamera from './pages/Ccamera';
 
 const Stack = createStackNavigator();
@@ -21,6 +22,7 @@ const AppNavigator = () => {
         <Stack.Screen name="VisualizarDados" component={VisualizarDados} options={{ headerShown: false }} />
         <Stack.Screen name="VisualizarHistorico" component={VisualizarHistorico} options={{ headerShown: false }} />
         <Stack.Screen name="VisualizarCidadao" component={VisualizarCidadao} options={{ headerShown: false }} />
+        <Stack.Screen name="VisualizarCarta" component={VisualizarCarta} options={{ headerShown: false }} />
         <Stack.Screen name="Ccamera" component={Ccamera} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
