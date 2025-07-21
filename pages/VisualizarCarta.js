@@ -122,7 +122,7 @@ const VisualizarCarta = () => {
           data.map(data => (
           <View key={data.id}>
             <View style={styles.textoErroDataCarta}>
-              {data.data_expiracao >= dataAtual ?
+              {new Date(data.data_expiracao) <= dataAtual ?
               <Text style={styles.textoErroDataCartatxtExp}>Expirado</Text>:
               <Text style={styles.textoErroDataCartatxtAti}>Ativo</Text>
               }   

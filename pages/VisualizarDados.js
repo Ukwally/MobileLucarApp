@@ -134,7 +134,7 @@ const VisualizarDados = () => {
                   <Text style={styles.cardContent}>BI: {item.NumeroBI}</Text>
                 </View>
                 <View style={styles.iconWrapper}>
-                  <TouchableOpacity style={styles.iconContainer}>
+                  <TouchableOpacity style={styles.iconContainer}  onPress={() => {navigation.navigate('VisualizarCidadao', { NumeroBI: item.NumeroBI });}}>
                     <MIcon name="more" size={30} color="#a9cce3" />
                   </TouchableOpacity>
                 </View>

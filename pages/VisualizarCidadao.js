@@ -89,6 +89,10 @@ const VisualizarCidadao = () => {
                   <MIcon style={styles.icon} name="location-on" size={20} color="#007599" />
                   <Text>Morada: {data.Endereco}</Text>
                 </View>
+                   <View style={styles.cardRow}>
+                    <FIcon style={styles.icon} name="venus" size={15} color="#007599" />
+                  <Text>Genero: {data.genero}</Text>
+                </View>
                 <View style={styles.cardRow}>
                   <FIcon style={styles.icon} name="calendar" size={15} color="#007599" />
                   <Text>Nascimento: {data.DataNascimento}</Text>
