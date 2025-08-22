@@ -11,33 +11,49 @@
       },
       "ios": {
         "simulator": true
+      },
+      "env": {
+        "NODE_VERSION": "20.16.0",
+        "NPM_VERSION": "10.8.1"
       }
     },
     "preview-debug": {
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleDebug"
+      },
+      "env": {
+        "NODE_VERSION": "20.16.0",
+        "NPM_VERSION": "10.8.1"
       }
     },
     "preview-release": {
       "android": {
         "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "NODE_VERSION": "20.16.0",
+        "NPM_VERSION": "10.8.1"
       }
     },
     "preview-internal": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "NODE_VERSION": "20.16.0",
+        "NPM_VERSION": "10.8.1"
       }
     },
     "production": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "NODE_VERSION": "20.16.0",
+        "NPM_VERSION": "10.8.1"
       }
     }
-  },
-  "env": {
-    "NODE_VERSION": "20.16.0",
-    "NPM_VERSION": "10.8.1"
   }
 }
