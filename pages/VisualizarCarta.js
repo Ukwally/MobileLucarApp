@@ -7,7 +7,6 @@ import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; //para o logout
 import { InputAccessoryView } from 'react-native';
-import { BlurView } from '@react-native-community/blur';
 
 import ImageViewer from '../components/ImageViewer';
 
@@ -87,7 +86,7 @@ const VisualizarCarta = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content"/>
+      <StatusBar barStyle="light-content" backgroundColor="#007599"/>
       <View style={styles.header}>
         <Text style={styles.logoText}>LUCAR</Text>
 

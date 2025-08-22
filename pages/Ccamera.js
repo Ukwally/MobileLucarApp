@@ -1,3 +1,4 @@
+//APENAS CAPTURAR IMAGEM
 import React, { useRef, useEffect, useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
@@ -33,26 +34,30 @@ const CustomCameraScreen = ({ onCapture }) => {
       }
     }
   };
-
   return (
-    <View style={styles.container}>
-      {Camera && Camera.Constants ? (
-        <Camera
-          ref={cameraRef}
-          style={styles.camera}
-          type={Camera.Constants.Type.back}
-          onCameraReady={() => setCameraReady(true)}
-        />
-      ) : (
-        <Text>Camera não está disponível</Text>
-      )}
-      <View style={styles.controls}>
-        <TouchableOpacity onPress={handleCapture} style={styles.captureButton}>
-          <Text style={styles.buttonText}>Capturar</Text>
-        </TouchableOpacity>
+  <View style={styles.container}>
+    <Camera
+      ref={cameraRef}
+      style={styles.camera}
+      type={Camera.Constants.Type.back}
+      onCameraReady={() => setCameraReady(true)}
+    />
+
+    {/* Overlay de foco */}
+    <View style={styles.overlay}>
+      <View style={styles.focusBox}>
+        {/* Você pode adicionar aqui uma imagem ou animação se quiser */}
       </View>
     </View>
-  );
+
+    <View style={styles.controls}>
+      <TouchableOpacity onPress={handleCapture} style={styles.captureButton}>
+        <Text style={styles.buttonText}>Capturar</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
+
 };
 
 const styles = StyleSheet.create({
@@ -61,7 +66,30 @@ const styles = StyleSheet.create({
   controls: { position: 'absolute', bottom: 20, width: '100%', alignItems: 'center' },
   captureButton: { backgroundColor: 'white', padding: 10, borderRadius: 5 },
   buttonText: { fontSize: 18, fontWeight: 'bold' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' }
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  
+  overlay: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'transparent',
+},
+
+focusBox: {
+  width: 250,
+  height: 100,
+  borderColor: 'white',
+  borderWidth: 2,
+  borderRadius: 20,
+  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
 });
 
 export default CustomCameraScreen;

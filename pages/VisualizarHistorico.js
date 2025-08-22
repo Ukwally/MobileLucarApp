@@ -62,7 +62,7 @@ const VisualizarHistorico = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content"/>
+      <StatusBar barStyle="light-content" backgroundColor="#007599"/>
       <View style={styles.header}>
         <Text style={styles.logoText}>LUCAR</Text>
         <TouchableOpacity>
