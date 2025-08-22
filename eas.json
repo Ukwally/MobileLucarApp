@@ -4,19 +4,19 @@
   },
   "build": {
     "development": {
-      "developmentClient": true, 
+      "developmentClient": true,
       "distribution": "internal",
       "android": {
-        "gradleCommand": ":app:assembleDebug" 
+        "gradleCommand": ":app:assembleDebug"
       },
       "ios": {
-        "simulator": true 
+        "simulator": true
       }
     },
     "preview-debug": {
       "android": {
-        "buildType": "apk", 
-        "gradleCommand": ":app:assembleDebug" 
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
       }
     },
     "preview-release": {
@@ -29,6 +29,15 @@
       "android": {
         "buildType": "apk"
       }
+    },
+    "production": {
+      "android": {
+        "buildType": "apk"
+      }
     }
+  },
+  "env": {
+    "NODE_VERSION": "20.16.0",
+    "NPM_VERSION": "10.8.1"
   }
 }
