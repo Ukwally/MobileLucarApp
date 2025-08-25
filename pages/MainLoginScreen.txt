@@ -1,73 +1,47 @@
-//LOGIN COM AXIOS
+//LOGIN COM FETCH
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image, Modal, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView,Image,Modal, Pressable, Alert} from 'react-native';
 import { BlurView } from 'expo-blur';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios'; // Importando axios
+import AsyncStorage from '@react-native-async-storage/async-storage'; // para o logout
+
 
 export default function LoginScreen({ navigation }) {
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState(''); // Estado para o ID
   const [password, setPassword] = useState('');
-  const [userData, setUserData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [userData, setUserData] = useState(null); 
   
   const handleLogin = async () => {
     if (!userId || !password) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
     }
-
-    setIsLoading(true);
-    
+  
     try {
-      console.log('Tentando login com Axios...');
-      
-      const response = await axios.post('http://192.168.43.22:3000/login', {
-        userId,
-        password
-      }, {
-        timeout: 10000, // 10 segundos de timeout
+      const response = await fetch('http://192.168.43.22:3000/login', {  // Use o IP correto da sua máquina
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({
+          userId,    // Certifique-se de que 'userId' está sendo passado corretamente
+          password,
+        }),
       });
+  
+      const data = await response.json();
+      if (response.ok) {
+        await AsyncStorage.setItem('token', data.user.tech_number);    //para o logout
 
-      console.log('Resposta recebida:', response.data);
-      
-      if (response.data.success) {
-        await AsyncStorage.setItem('token', response.data.user.tech_number);
-        setUserData(response.data.user);
-        navigation.navigate('HomeS', { user: response.data.user }); 
+        setUserData(data.user);
+        navigation.navigate('HomeS', { user: data.user}); 
       } else {
-        Alert.alert('Erro', response.data.message || 'Credenciais erradas');
+        Alert.alert('Erro', 'Credenciais erradas');
       }
     } catch (error) {
-      console.error('Erro detalhado com Axios:', error);
-      
-      if (error.code === 'ECONNABORTED') {
-        Alert.alert('Erro', 'Timeout - Servidor não respondeu a tempo');
-      } else if (error.response) {
-        // O servidor respondeu com um status de erro
-        console.error('Status do erro:', error.response.status);
-        console.error('Dados do erro:', error.response.data);
-        
-        if (error.response.status === 401) {
-          Alert.alert('Erro', 'Credenciais inválidas');
-        } else {
-          Alert.alert('Erro', `Erro do servidor: ${error.response.status}`);
-        }
-      } else if (error.request) {
-        // A requisição foi feita mas não houve resposta
-        console.error('Sem resposta do servidor:', error.request);
-        Alert.alert('Erro', 'Não foi possível conectar ao servidor. Verifique a conexão.');
-      } else {
-        // Outro tipo de erro
-        Alert.alert('Erro', `Erro inesperado: ${error.message}`);
-      }
-    } finally {
-      setIsLoading(false);
+      console.error('Erro ao conectar ao servidor:', error);
+      Alert.alert('Erro', 'Erro ao conectar ao servidor');
     }
   };  
 
@@ -75,16 +49,19 @@ export default function LoginScreen({ navigation }) {
     <View style={styles.container}>
       {/* Cabeçalho com botão de configurações */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.settingsButton} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity style={styles.settingsButton}  onPress={() => setModalVisible(true)}>
           <Image
-            source={require('../assets/settings-icon2.png')}
+            source={require('../assets/settings-icon2.png')} // Substitua com o caminho do seu ícone de configurações
             style={styles.settingsIcon}
           />
         </TouchableOpacity>
       </View>
-      
       {/* Conteúdo principal */}
       <ScrollView contentContainerStyle={styles.innerContainer}>
+        {/*<Image
+          source={require('./assets/logo.png')}
+          style={styles.logo}
+        /> */}
         <Text style={styles.logoText}>LUCAR</Text>
         <Text style={styles.welcomeText}>Bem-vindo</Text>
 
@@ -94,9 +71,7 @@ export default function LoginScreen({ navigation }) {
           placeholderTextColor="#aaa"
           value={userId}
           onChangeText={setUserId}
-          editable={!isLoading}
         />
-        
         <TextInput 
           style={styles.input}
           placeholder="Senha"
@@ -104,24 +79,18 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          editable={!isLoading}
         />
 
-        <TouchableOpacity 
-          style={[styles.button, isLoading && styles.buttonDisabled]} 
-          onPress={handleLogin}
-          disabled={isLoading}
-        >
-          <Text style={styles.buttonText}>
-            {isLoading ? 'CONECTANDO...' : 'COMEÇAR'}
-          </Text>
+        <TouchableOpacity style={styles.button}  onPress={handleLogin}>
+          <Text style={styles.buttonText}>COMEÇAR</Text>
         </TouchableOpacity>
 
         <Text style={styles.privacyPolicy}>
           Políticas e Regulamentos
         </Text>
       </ScrollView>
-      
+      {/* Modal de Configurações */}
+
       {/* Modal de Configurações */}
       <Modal
         animationType="slide"
@@ -130,6 +99,7 @@ export default function LoginScreen({ navigation }) {
         onRequestClose={() => setModalVisible(false)} 
       >
         <View style={styles.modalOverlay}>
+          {/* BlurView aplicado ao fundo */}
           <BlurView
             style={styles.absolute}
             intensity={400} 
@@ -137,14 +107,13 @@ export default function LoginScreen({ navigation }) {
           />
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Configurações</Text>
-            <TouchableOpacity style={styles.modalButton}>
+            <TouchableOpacity style={styles.modalButton} >
               <Text style={styles.modalButtonText}>DESFAZER USUÁRIO</Text>
             </TouchableOpacity>
           
-            <TouchableOpacity style={styles.modalButton}>
+            <TouchableOpacity style={styles.modalButton} >
               <Text style={styles.modalButtonText}>DEFINIR USUÁRIO PADRÃO</Text>
             </TouchableOpacity>
-            
             <Pressable
               style={styles.modalCloseButton}
               onPress={() => setModalVisible(false)}
@@ -154,6 +123,8 @@ export default function LoginScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+
     </View>
   );
 }
@@ -172,22 +143,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     position: 'relative',
   },
-  
   settingsButton: {
     position: 'absolute',
     top: 20,
     right: 20,
     zIndex: 1,
   },
-  
   settingsIcon: {
     width: 30,
     height: 30, 
   },
 
   innerContainer: {
+    //flex: 1,
     padding: 20,
     alignItems: 'center',
+  },
+
+  logo: {
+    width: 170,
+    height: 50,
+    marginBottom: 10, 
   },
 
   logoText: {
@@ -204,7 +180,6 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     color: '#fff',
   },
-  
   input: {
     height: 40,
     width: '100%',
@@ -213,7 +188,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 15,
   },
-  
   button: {
     backgroundColor: '#4682B4',
     paddingVertical: 10,
@@ -221,29 +195,23 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     marginTop: 10,
   },
-  
-  buttonDisabled: {
-    backgroundColor: '#a9cce3',
-  },
-  
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  
   privacyPolicy: {
     marginTop: 20,
     color: '#fff',
     textDecorationLine: 'underline',
   },
   
-  modalOverlay: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  
   modalContent: {
     width: '80%',
     padding: 20,
@@ -251,13 +219,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
   },
-  
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  
   modalButton: {
     width: '100%',
     padding: 10,
@@ -266,26 +232,28 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     alignItems: 'center',
   },
-  
   modalButtonText: {
     color: 'white',
     fontSize: 16,
   },
-  
   modalCloseButton: {
     marginTop: 20,
     padding: 10,
     backgroundColor: '#5499c7',
     borderRadius: 5,
   },
-  
   modalCloseButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  
   absolute: {
     ...StyleSheet.absoluteFillObject,
   },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
 });

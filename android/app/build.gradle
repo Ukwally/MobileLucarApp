@@ -86,7 +86,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.testeexpo"
+    namespace 'com.ukwally.Texteexpo'
     defaultConfig {
         applicationId 'com.ukwally.Texteexpo'
         minSdkVersion rootProject.ext.minSdkVersion

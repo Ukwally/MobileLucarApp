@@ -1,17 +1,21 @@
 {
-  "cli": {
-    "version": ">= 16.0.1"
-  },
   "build": {
-    "production": {
+    "preview": {
       "android": {
         "buildType": "apk"
-      },
-      "env": {
-        "NODE_VERSION": "20.16.0",
-        "NPM_VERSION": "10.8.1",
-        "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
       }
-    }
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "preview4": {
+      "distribution": "internal"
+    },
+    "production": {}
   }
 }
