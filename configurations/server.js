@@ -14,7 +14,6 @@ const port = 3000;
 app.use(bodyParser.json()); // Para interpretar JSON no corpo da requisição
 app.use(express.json());    // Alternativa moderna para interpretar JSON
 //app.use(cors());            // Permite requisições de origens diferentes
-
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST'],
