@@ -1,95 +1,86 @@
-//APENAS CAPTURAR IMAGEM
-import React, { useRef, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
-import { Camera } from 'expo-camera';
+//Camera Reacn-native-vision-camera do Video do YOUTUBE
+import { useEffect, useState, useRef } from "react";
+import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from "react-native";
+import { Camera, useCameraDevice, useCameraPermission, useMicrophonePermission } from "react-native-vision-camera";
 
-const CustomCameraScreen = ({ onCapture }) => {
-  const cameraRef = useRef(null);
-  const [hasPermission, setHasPermission] = useState(null);
-  const [cameraReady, setCameraReady] = useState(false);
+export default function Ccamera() {
+    const device = useCameraDevice("back");
+    const { hasPermission, requestPermission } = useCameraPermission();
+    const { hasPermission: hasMicPermission, requestPermission: requestMicPermission } = useMicrophonePermission();
+    const [permission, setPermission] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+    const [isRecording, setIsRecording] = useState(false);
 
-  if (hasPermission === null) {
-    return <View style={styles.center}><Text>Verificando permissões...</Text></View>;
-  }
+    const cameraRef = useRef(null);
 
-  if (!hasPermission) {
-    return <View style={styles.center}><Text>Permissão negada</Text></View>;
-  }
+    useEffect(() => {
+        (async () => {
+            const status = await requestPermission();
+            const statusMic = await requestMicPermission();
 
-  const handleCapture = async () => {
-    if (cameraReady && cameraRef.current) {
-      try {
-        const photo = await cameraRef.current.takePictureAsync({ quality: 0.5, base64: true });
-        onCapture(photo.uri);
-      } catch (error) {
-        console.error(error);
-        Alert.alert('Erro', 'Não foi possível capturar a imagem');
-      }
+            if (status && statusMic) {
+                setPermission(true);
+            }
+        })()
+    }, [])
+
+    const startRecording = () => {
+        if (!cameraRef.current || !device) return;
+        setIsRecording(true);
+
+        cameraRef.current.startRecording({
+            onRecordingFinished: (video) => {
+                console.log(video);
+            },
+            onRecordingError: (error) => {
+                console.log(error);
+            }
+        })
     }
-  };
-  return (
-  <View style={styles.container}>
-    <Camera
-      ref={cameraRef}
-      style={styles.camera}
-      type={Camera.Constants.Type.back}
-      onCameraReady={() => setCameraReady(true)}
-    />
 
-    {/* Overlay de foco */}
-    <View style={styles.overlay}>
-      <View style={styles.focusBox}>
-        {/* Você pode adicionar aqui uma imagem ou animação se quiser */}
-      </View>
-    </View>
+    const stopRecording = async () => {
+        if (cameraRef.current) {
+            await cameraRef.current.stopRecording();
+            setIsRecording(false);
+        }
+    }
 
-    <View style={styles.controls}>
-      <TouchableOpacity onPress={handleCapture} style={styles.captureButton}>
-        <Text style={styles.buttonText}>Capturar</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
+    if (!permission) return <View></View>
 
+    if (!device) return <View></View>
+
+    return (
+        <View style={styles.container}>
+            <StatusBar hidden />
+
+            <Camera
+                style={StyleSheet.absoluteFill}
+                ref={cameraRef}
+                device={device}
+                isActive={true}
+                video={true}
+                audio={true}
+            />
+            <TouchableOpacity
+                onPressIn={startRecording}
+                onPressOut={stopRecording}
+                style={{
+                    width: 70,
+                    height: 70,
+                    borderRadius: 99,
+                    borderWidth: 8,
+                    borderColor: 'red',
+                    position: 'absolute',
+                    bottom: 70,
+                    alignSelf: 'center'
+                }}
+            />
+        </View>
+    )
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  camera: { flex: 1 },
-  controls: { position: 'absolute', bottom: 20, width: '100%', alignItems: 'center' },
-  captureButton: { backgroundColor: 'white', padding: 10, borderRadius: 5 },
-  buttonText: { fontSize: 18, fontWeight: 'bold' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  
-  overlay: {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'transparent',
-},
-
-focusBox: {
-  width: 250,
-  height: 100,
-  borderColor: 'white',
-  borderWidth: 2,
-  borderRadius: 20,
-  backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-
+    container: {
+        flex: 1,
+    },
 });
-
-export default CustomCameraScreen;

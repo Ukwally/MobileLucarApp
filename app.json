@@ -29,6 +29,16 @@
       "eas": {
         "projectId": "52f5a282-40a4-4a8b-a4da-183416ad3c4a"
       }
-    }
+    },
+    "plugins": [
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(PRODUCT_NAME) precisa acessar vision camera",
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "$(PRODUCT_NAME) needs access to your Microphone."
+        }
+      ]
+    ]
   }
 }

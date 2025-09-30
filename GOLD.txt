@@ -1,0 +1,36 @@
+package.json DA VERSÃO INICIAL
+"dependencies": {
+  "bcrypt": "^5.1.1",
+  "cors": "^2.8.5",
+  "express": "^4.21.2",
+  "mysql": "^2.18.1",
+},
+######
+app.json Adicionado ao app.json para usar expo camera
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ]
+    ]
+  }
+} 
+######
+
+Removido (plugins da camera expo) do app.json
+ "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permita $(PRODUCT_NAME) acessar a camera",
+          "microphonePermission": "Permita $(PRODUCT_NAME) acessar ao microphone",
+          "recordAudioAndroid": true
+        }
+      ]
+    ]

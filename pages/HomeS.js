@@ -4,7 +4,6 @@ import { useState , useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert,TouchableHighlight,FlatList,ScrollView} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ImageViewer from '../components/ImageViewer';
-import CustomCamera from '../components/CustomCameraDS';
 import { useNavigation } from '@react-navigation/native';
 
 import MIcon from 'react-native-vector-icons/MaterialIcons';
@@ -205,7 +204,7 @@ const HomeS = ({route}) => {
           <Text style={styles.iconText}>Carta</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconContainer}   onPress={() => navigation.navigate('Ccamera', { NumeroBI: 20 })}>
+        <TouchableOpacity style={styles.iconContainer}   onPress={() => navigation.navigate('Ccamera')}>
           <MIcon name="settings" size={30} color="#a9cce3" />
           <Text style={styles.iconText}>Esboço</Text>
         </TouchableOpacity>
