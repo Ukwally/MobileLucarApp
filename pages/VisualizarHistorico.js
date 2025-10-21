@@ -1,6 +1,6 @@
 import React from 'react';
-import { useState , useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, StatusBar, TouchableOpacity ,Image,FlatList,ActivityIndicator} from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, StatusBar, TouchableOpacity, Image, FlatList, ActivityIndicator } from 'react-native';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import FIcon from 'react-native-vector-icons/FontAwesome';
 import { useRoute } from '@react-navigation/native';
@@ -23,7 +23,10 @@ const VisualizarHistorico = () => {
     try {
       // Limpar qualquer dado armazenado no AsyncStorage, como token, se necessário
       await AsyncStorage.removeItem('token');
-      
+      await AsyncStorage.removeItem('userData');
+      //await AsyncStorage.clear(); //limpa tudo!
+      //await AsyncStorage.multiRemove(['token', 'userData']); // paga as duas chaves
+
       // Redefine a pilha de navegação para enviar o usuário apenas para a tela de login
       navigation.reset({
         index: 0,
@@ -33,7 +36,7 @@ const VisualizarHistorico = () => {
       console.error('Erro ao sair:', error);
     }
   };
-  
+
 
 
   useEffect(() => {
@@ -53,7 +56,7 @@ const VisualizarHistorico = () => {
   }, [matricola]);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#a9cce3"/>;
+    return <ActivityIndicator size="large" color="#a9cce3" />;
   }
 
   if (error) {
@@ -62,11 +65,11 @@ const VisualizarHistorico = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#007599"/>
+      <StatusBar barStyle="light-content" backgroundColor="#007599" />
       <View style={styles.header}>
         <Text style={styles.logoText}>LUCAR</Text>
         <TouchableOpacity>
-            <MIcon name="menu" size={30} color="#FFFFFF" />
+          <MIcon name="menu" size={30} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -78,7 +81,7 @@ const VisualizarHistorico = () => {
             <View key={item.Id} style={styles.card}>
               <TouchableOpacity>
                 <View style={styles.cardImageA}>
-                  <MIcon name="person" size={30} color="#a9cce3"/>
+                  <MIcon name="person" size={30} color="#a9cce3" />
                 </View>
               </TouchableOpacity>
               <View style={styles.textContainer}>
@@ -86,7 +89,7 @@ const VisualizarHistorico = () => {
                 <View style={styles.Row}>
                   <MIcon name="fingerprint" size={20} color="#a9cce3" />
                   <Text style={styles.cardContent}>BI: {item.NumeroBI}</Text>
-                  </View>
+                </View>
 
                 <View style={styles.Row}>
                   <MIcon name="location-on" size={20} color="#a9cce3" />
@@ -94,7 +97,7 @@ const VisualizarHistorico = () => {
                 </View>
               </View>
               <View style={styles.iconWrapper}>
-                 {/* Adicionado o navigation para ver dados do cidadão */}
+                {/* Adicionado o navigation para ver dados do cidadão */}
                 <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('VisualizarCidadao', { NumeroBI: item.NumeroBI })}>
                   <MIcon name="add" size={30} color="#a9cce3" />
                 </TouchableOpacity>
@@ -119,9 +122,9 @@ const VisualizarHistorico = () => {
   );
 };
 export const styles = StyleSheet.create({
-  textoCamecalho:{
-    color:'grey',
-    marginTop:6,
+  textoCamecalho: {
+    color: 'grey',
+    marginTop: 6,
   },
   container: {
     flex: 1,
@@ -134,14 +137,14 @@ export const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    paddingTop:15,
+    paddingTop: 15,
     backgroundColor: '#007599',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     position: 'absolute',
-    zIndex:1,
+    zIndex: 1,
     top: 0,
     left: 0,
     right: 0,
@@ -150,7 +153,7 @@ export const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: '300',
     color: '#fff',
-    padding:4,
+    padding: 4,
   },
   dataImage: {
     width: 40,
@@ -165,7 +168,7 @@ export const styles = StyleSheet.create({
     paddingTop: 60, // altura do cabeçalho
     paddingBottom: 60, // altura do rodapé
     paddingHorizontal: 10,
-    backgroundColor:'#e6f2ff',
+    backgroundColor: '#e6f2ff',
 
   },
   contentText: {
@@ -176,9 +179,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 5,
     padding: 15,
-    width:'100%',
+    width: '100%',
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
     marginVertical: 10,
     marginHorizontal: 20,
     shadowColor: '#000',
@@ -191,25 +194,25 @@ export const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor:'#0086b3',
-    marginRight:10,
-    justifyContent: 'center', 
+    backgroundColor: '#0086b3',
+    marginRight: 10,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   cardImageB: {
     width: 50,
     height: 50,
-    marginRight:10,
-    justifyContent: 'center', 
+    marginRight: 10,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  Row:{
+  Row: {
     flexDirection: 'row', // Para alinhar ícone e texto em linha
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   textContainer: {
     flex: 1,
-    paddingRight:20, // Faz o contêiner do texto ocupar o restante do espaço disponível
+    paddingRight: 20, // Faz o contêiner do texto ocupar o restante do espaço disponível
   },
   cardTitle: {
     fontSize: 18,
@@ -241,8 +244,8 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopColor: '#a9cce3', 
-    borderTopLeftRadius: 3, 
+    borderTopColor: '#a9cce3',
+    borderTopLeftRadius: 3,
     borderTopRightRadius: 3,
     borderTopWidth: 4,
   },

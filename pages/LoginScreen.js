@@ -1,8 +1,10 @@
 //LOGIN COM FETCH
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView,Image,Modal, Pressable, Alert} from 'react-native';
+import { StyleSheet, StatusBar, Text, View, TextInput, TouchableOpacity, ScrollView, Image, Modal, Pressable, Alert } from 'react-native';
 import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // para o logout
+import MIcon from 'react-native-vector-icons/MaterialIcons';
+
 
 
 export default function LoginScreen({ navigation }) {
@@ -10,14 +12,14 @@ export default function LoginScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [userId, setUserId] = useState(''); // Estado para o ID
   const [password, setPassword] = useState('');
-  const [userData, setUserData] = useState(null); 
-  
+  const [userData, setUserData] = useState(null);
+
   const handleLogin = async () => {
     if (!userId || !password) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
     }
-  
+
     try {
       const response = await fetch('http://192.168.43.22:3000/login', {  // Use o IP correto da sua máquina
         method: 'POST',
@@ -29,13 +31,15 @@ export default function LoginScreen({ navigation }) {
           password,
         }),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
-        await AsyncStorage.setItem('token', data.user.tech_number);    //para o logout
+        await AsyncStorage.setItem('token', data.user.tech_number); // get user   //para o logout 
+        await AsyncStorage.setItem('userData', JSON.stringify(data.user)); // get User
+
 
         setUserData(data.user);
-        navigation.navigate('HomeS', { user: data.user}); 
+        navigation.navigate('HomeS', { user: data.user });
       } else {
         Alert.alert('Erro', 'Credenciais erradas');
       }
@@ -43,17 +47,17 @@ export default function LoginScreen({ navigation }) {
       console.error('Erro ao conectar ao servidor:', error);
       Alert.alert('Erro', 'Erro ao conectar ao servidor');
     }
-  };  
+  };
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#4682B4" />
+
       {/* Cabeçalho com botão de configurações */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.settingsButton}  onPress={() => setModalVisible(true)}>
-          <Image
-            source={require('../assets/settings-icon2.png')} // Substitua com o caminho do seu ícone de configurações
-            style={styles.settingsIcon}
-          />
+        <TouchableOpacity style={styles.settingsButton} onPress={() => setModalVisible(true)}>
+          {/*<Image source={require('../assets/settings-icon2.png')} style={styles.settingsIcon} />*/}
+          <MIcon name="settings" size={30} color="#ffffffff" />
         </TouchableOpacity>
       </View>
       {/* Conteúdo principal */}
@@ -65,14 +69,14 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.logoText}>LUCAR</Text>
         <Text style={styles.welcomeText}>Bem-vindo</Text>
 
-        <TextInput 
+        <TextInput
           style={styles.input}
           placeholder="ID"
           placeholderTextColor="#aaa"
           value={userId}
           onChangeText={setUserId}
         />
-        <TextInput 
+        <TextInput
           style={styles.input}
           placeholder="Senha"
           placeholderTextColor="#aaa"
@@ -81,7 +85,7 @@ export default function LoginScreen({ navigation }) {
           onChangeText={setPassword}
         />
 
-        <TouchableOpacity style={styles.button}  onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>COMEÇAR</Text>
         </TouchableOpacity>
 
@@ -96,21 +100,21 @@ export default function LoginScreen({ navigation }) {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)} 
+        onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
           {/* BlurView aplicado ao fundo */}
           <BlurView
             style={styles.absolute}
-            intensity={400} 
-            blurType="dark" 
+            intensity={400}
+            blurType="dark"
           />
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Configurações</Text>
             <TouchableOpacity style={styles.modalButton} >
               <Text style={styles.modalButtonText}>DESFAZER USUÁRIO</Text>
             </TouchableOpacity>
-          
+
             <TouchableOpacity style={styles.modalButton} >
               <Text style={styles.modalButtonText}>DEFINIR USUÁRIO PADRÃO</Text>
             </TouchableOpacity>
@@ -151,7 +155,7 @@ const styles = StyleSheet.create({
   },
   settingsIcon: {
     width: 30,
-    height: 30, 
+    height: 30,
   },
 
   innerContainer: {
@@ -163,7 +167,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 170,
     height: 50,
-    marginBottom: 10, 
+    marginBottom: 10,
   },
 
   logoText: {
@@ -205,7 +209,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textDecorationLine: 'underline',
   },
-  
+
   modalContainer: {
     flex: 1,
     justifyContent: 'center',

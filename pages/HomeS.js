@@ -1,29 +1,42 @@
 import React from 'react';
-import { StatusBar } from "expo-status-bar";
-import { useState , useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert,TouchableHighlight,FlatList,ScrollView} from 'react-native';
+//import { StatusBar } from "expo-status-bar";
+import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Image, Alert, TouchableHighlight, FlatList, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ImageViewer from '../components/ImageViewer';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; //para o logout
 
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import FIcon from 'react-native-vector-icons/FontAwesome';
 
 const PlaceholderImage = require('../assets/images/background-image.png');
 
-const HomeS = ({route}) => {
+const HomeS = ({ route }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [extractedText, setExtractedText] = useState("");
-  const [showCamera, setShowCamera] = useState(false); //ADICIONADO PARA CAMERA COSTOMIZADA DS Estado para controlar a exibição da câmera
   const navigation = useNavigation();
-  const { user } = route.params; 
+  const { user } = route.params;
 
-  const handlePictureTaken = (photo) => { //handlePictureTaken ADICIONADO PARA CAMERA COSTOMIZADA DS
-    setSelectedImage(photo.uri);
-    performOCR(photo); // Extrair texto da foto tirada
-    setShowCamera(false); // Fechar a câmera após tirar a foto
-  };
-  
+  useEffect(() => {
+    if (route.params?.capturedImage) {
+
+      StatusBar.setBarStyle('dark-content');  // Altera a cor do texto da StatusBar
+      StatusBar.setBackgroundColor('#ffffff'); // Define a cor do fundo da StatusBar
+
+      const uri = route.params.capturedImage;
+      setSelectedImage(uri); // Mostra a imagem tirada
+
+      const file = {
+        uri,
+        name: "photo.jpg",
+        type: "image/jpeg",
+      };
+
+      performOCR(file);
+    }
+  }, [route.params?.capturedImage]);
+
   const handleNavigate = () => {
     navigation.navigate('VisualizarDados', {
       endpoint: `http://192.168.43.22:3000/data/${encodeURIComponent(extractedText)}`, // Usa o texto extraído na URL
@@ -34,10 +47,8 @@ const HomeS = ({route}) => {
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      //quality: 1,   removido para exrair texto da imagem
-      //abaixo adicionado para extrair texto da imagem
-      //mediaTypes:ImagePicker.MediaTypeOptions.Images,
-      mediaTypes:ImagePicker.MediaTypeOptions.Images,
+
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
 
       base64: true,
       allowsMultipleSelection: false,
@@ -47,15 +58,14 @@ const HomeS = ({route}) => {
       setSelectedImage(result.assets[0].uri);
       performOCR(result.assets[0]); //Adicionado para extrai texto da imagem
     } else {
-      Alert.alert('Aviso','Nenhuma imagem selecionada');
+      Alert.alert('Aviso', 'Nenhuma imagem selecionada');
     }
   };
   const takePhotoAsync = async () => {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      //quality: 1,   removido para exrair texto da imagem
-      //abaixo adicionado para extrair texto da imagem
-      mediaTypes:ImagePicker.MediaTypeOptions.Images,
+
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
       allowsMultipleSelection: false,
     });
@@ -63,7 +73,6 @@ const HomeS = ({route}) => {
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
       performOCR(result.assets[0]); // Adicionado para extr
-
     } else {
       Alert.alert('Aviso', 'Nenhuma foto tirada');
     }
@@ -71,99 +80,58 @@ const HomeS = ({route}) => {
   const performOCR = (file) => {
     let myHeaders = new Headers();
     myHeaders.append(
-        "apikey",
-        // ADDD YOUR API KEY HERE 
-        "FEmvQr5uj99ZUvk3essuYb6P5lLLBS20"  
+      "apikey",
+      "FEmvQr5uj99ZUvk3essuYb6P5lLLBS20"
     );
     myHeaders.append(
-        "Content-Type",
-        "multipart/form-data"
+      "Content-Type",
+      "multipart/form-data"
     );
 
     let raw = file;
     let requestOptions = {
-        method: "POST",
-        redirect: "follow",
-        headers: myHeaders,
-        body: raw,
+      method: "POST",
+      redirect: "follow",
+      headers: myHeaders,
+      body: raw,
     };
 
-    // Send a POST request to the OCR API
     fetch(
       "https://api.apilayer.com/image_to_text/upload",
       requestOptions
     )
-    .then((response) => response.json())
-    .then((result) => {
-    
-      // Set the extracted text in state
-      setExtractedText(result["all_text"]); 
-      // handleNavigate(); // Navegar após a extração do texto  ou usar isto ou usar o metodo que denominei DELTA acima
+      .then((response) => response.json())
+      .then((result) => {
 
-    })
-    .catch((error) => console.log("error", error));
+        setExtractedText(result["all_text"]);
+
+      })
+      .catch((error) => console.log("error", error));
   };
 
-  {/*return ( PARA A CAMERA CUSTOMIZADA DS
-    <View style={styles.container}>
-      {showCamera ? (
-        <CustomCamera onPictureTaken={handlePictureTaken} />
-      ) : (
-        <>
-          <View style={styles.header}>
-            <View style={styles.headerLeftSec}>
-              <FIcon name="user" size={20} color="#a9cce3" />
-              <Text style={styles.headerText}>{user.username}</Text>
-            </View>
-            <MIcon name="logout" size={20} color="#a9cce3" />
-          </View>
-          <View style={styles.imageContainer}>
-            <ImageViewer
-              placeholderImageSource={PlaceholderImage}
-              selectedImage={selectedImage}
-            />
-          </View>
-          <View style={styles.imageContainer}>
-            {selectedImage ? (
-              extractedText ? (
-                <TouchableHighlight onPress={handleNavigate} style={styles.searchButton}>
-                  <MIcon name="compare" size={30} color="white" />
-                </TouchableHighlight>
-              ) : (
-                <Text style={styles.text}>Aguarde a extração do texto...</Text>
-              )
-            ) : (
-              <Text style={styles.text}>Selecione uma imagem para Começar</Text>
-            )}
-          </View>
-          <Text style={styles.text2}>{extractedText}</Text>
-          <StatusBar style="auto" />
-          <View style={styles.footer}>
-            <TouchableOpacity style={styles.iconContainer} onPress={pickImageAsync}>
-              <FIcon name="image" size={30} color="#a9cce3" />
-              <Text style={styles.iconText}>Galeria</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconContainer} onPress={() => setShowCamera(true)}>
-              <FIcon name="camera" size={30} color="#a9cce3" />
-              <Text style={styles.iconText}>Foto</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconContainer}>
-              <FIcon name="microphone" size={30} color="#a9cce3" />
-              <Text style={styles.iconText}>Áudio</Text>
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
-    </View>
-  );*/}
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('userData');
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      console.error('Erro ao sair:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeftSec}>
-        <FIcon name="user" size={20} color="#a9cce3" />
-        <Text style={styles.headerText}>{user.username}</Text>
+          <FIcon name="user" size={20} color="#a9cce3" />
+          <Text style={styles.headerText}>{user.username}</Text>
         </View>
-        <MIcon name="logout" size={20} color="#a9cce3" />
+        <MIcon name="logout" onPress={handleLogout} size={20} color="#a9cce3" />
       </View>
       <View style={styles.imageContainer}>
         <ImageViewer
@@ -173,8 +141,8 @@ const HomeS = ({route}) => {
       </View>
       <View style={styles.imageContainer}>
         {selectedImage ? (
-          extractedText ? ( 
-            <TouchableHighlight onPress={handleNavigate} style={styles.searchButton}> 
+          extractedText ? (
+            <TouchableHighlight onPress={handleNavigate} style={styles.searchButton}>
               <MIcon name="compare" size={30} color="white" />
             </TouchableHighlight>
           ) : (
@@ -186,9 +154,9 @@ const HomeS = ({route}) => {
       </View>
 
       <Text style={styles.text2}>
-          {extractedText}
+        {extractedText}
       </Text>
-      <StatusBar style="auto" />
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <View style={styles.footer}>
         <TouchableOpacity style={styles.iconContainer} onPress={pickImageAsync}>
           <FIcon name="image" size={30} color="#a9cce3" />
@@ -199,14 +167,19 @@ const HomeS = ({route}) => {
           <Text style={styles.iconText}>Foto</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconContainer}   onPress={() => navigation.navigate('VisualizarCarta')}>
+        <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('VisualizarCarta')}>
           <FIcon name="credit-card" size={30} color="#a9cce3" />
           <Text style={styles.iconText}>Carta</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconContainer}   onPress={() => navigation.navigate('Ccamera')}>
+        <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Ccamera')}>
           <MIcon name="settings" size={30} color="#a9cce3" />
           <Text style={styles.iconText}>Esboço</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Pesquisar', { user })}>
+          <FIcon name="pencil" size={30} color="#a9cce3" />
+          <Text style={styles.iconText}>Texto</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -220,36 +193,37 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'scroll',
   },
   header: {
     position: 'absolute',
     top: 0,
-    backgroundColor: '#f8f8f8', 
+    backgroundColor: '#f8f8f8',
     paddingTop: 30,
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
     alignItems: 'center',
     borderRadius: 2,
-    width:'100%',
+    width: '100%',
     flexDirection: 'row',
-    justifyContent:'space-between'
+    justifyContent: 'space-between'
   },
-  headerLeftSec:{
+  headerLeftSec: {
     flexDirection: 'row',
-    alignItems:'center',
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#2d5986',
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
   },
   text: {
     fontSize: 14,
-    color:'grey',
+    color: 'grey',
   },
   text2: {
     fontSize: 20,
-    color:'#2d5986',
+    color: '#2d5986',
   },
   footer: {
     position: 'absolute',
@@ -264,12 +238,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  searchButton:{
-    backgroundColor:'#a9cce3',
-    padding:10,
-    paddingHorizontal:40,
+  searchButton: {
+    backgroundColor: '#a9cce3',
+    padding: 10,
+    paddingHorizontal: 40,
     borderRadius: 5,
-    marginTop:10,
+    marginTop: 10,
     alignItems: 'center',
   },
   buttonText: {

@@ -23,6 +23,9 @@ const VisualizarCidadao = () => {
     try {
       // Limpar qualquer dado armazenado no AsyncStorage, como token, se necessário
       await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('userData');
+      //await AsyncStorage.clear(); //limpa tudo!
+      //await AsyncStorage.multiRemove(['token', 'userData']); // paga as duas chaves
 
       // Redefine a pilha de navegação para enviar o usuário apenas para a tela de login
       navigation.reset({
