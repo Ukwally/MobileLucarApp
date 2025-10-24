@@ -53,7 +53,7 @@ export default function Ccamera() {
                 height: photo.height * 0.5, // Altura de 50%*/
 
                 x: photo.width * 0.05,
-                y: photo.height * 0.35, 
+                y: photo.height * 0.35,
                 width: photo.width * 0.9,
                 height: photo.height * 0.3,
             };
@@ -79,7 +79,7 @@ export default function Ccamera() {
 
     return (
         <View style={styles.container}>
-            <StatusBar hidden />
+            <StatusBar barStyle="dark-content" backgroundColor="#e0e1e6" />
             <Camera
                 style={StyleSheet.absoluteFill}
                 //style={{ flex: 0.5 }} // apenas metade da tela pelo corte

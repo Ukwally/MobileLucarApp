@@ -21,9 +21,6 @@ const HomeS = ({ route }) => {
   useEffect(() => {
     if (route.params?.capturedImage) {
 
-      StatusBar.setBarStyle('dark-content');  // Altera a cor do texto da StatusBar
-      StatusBar.setBackgroundColor('#ffffff'); // Define a cor do fundo da StatusBar
-
       const uri = route.params.capturedImage;
       setSelectedImage(uri); // Mostra a imagem tirada
 
@@ -162,18 +159,20 @@ const HomeS = ({ route }) => {
           <FIcon name="image" size={30} color="#a9cce3" />
           <Text style={styles.iconText}>Galeria</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconContainer} onPress={takePhotoAsync}>
-          <FIcon name="camera" size={30} color="#a9cce3" />
+
+        <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Ccamera')}>
+          <MIcon name="camera" size={30} color="#a9cce3" />
           <Text style={styles.iconText}>Foto</Text>
         </TouchableOpacity>
+
 
         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('VisualizarCarta')}>
           <FIcon name="credit-card" size={30} color="#a9cce3" />
           <Text style={styles.iconText}>Carta</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Ccamera')}>
-          <MIcon name="settings" size={30} color="#a9cce3" />
+        <TouchableOpacity style={styles.iconContainer} onPress={takePhotoAsync}>
+          <FIcon name="settings" size={30} color="#a9cce3" />
           <Text style={styles.iconText}>Esboço</Text>
         </TouchableOpacity>
 
