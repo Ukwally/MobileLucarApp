@@ -17,9 +17,9 @@ const VisualizarDados = () => {
   const route = useRoute();
   const [dadosRoubada, setDadosRoubada] = useState(null); // ou false
   const [data, setData] = useState([]);
+  const [seguro, setSeguro] = useState(null);  // Novo estado para seguro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const { extractedText } = route.params || {};
   const { endpoint } = route.params || {};
 
@@ -62,10 +62,22 @@ const VisualizarDados = () => {
       }
     };
 
+    const fetchSeguro = async () => {
+      try {
+        const res = await fetch(`http://192.168.43.22:3000/seguro/${extractedText}`);
+        const json = await res.json();
+        setSeguro(json.length > 0 ? json[0] : null);  // Assume que retorna um array com um item ou vazio
+      } catch (err) {
+        setError(err);
+      }
+    };
+
+    // Função para buscar todos os dados
     const fetchAll = async () => {
-      await Promise.all([fetchViaturas(), fetchRoubadas()]);
+      await Promise.all([fetchViaturas(), fetchRoubadas(), fetchSeguro()]);
       setLoading(false);
     };
+
 
     if (endpoint && extractedText) {
       fetchAll();
@@ -99,9 +111,12 @@ const VisualizarDados = () => {
           <MIcon name="menu" size={30} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} nestedScrollEnabled={true}>
         {dadosRoubada ? (
-          <Text style={styles.dadosRoubada}>VIATURA ROUBADA</Text>
+          <View style={styles.dadosRoubada}>
+            <MIcon name="info" size={30} color="orange" />
+            <Text style={{ color: '#d60000ff', fontWeight: 800, marginLeft: 7 }}>VIATURA ROUBADA</Text>
+          </View>
         ) : (
           <Text style={styles.textoCamecalho}>VIATURA PESQUISADA: {extractedText || "Nenhum texto extraído"}</Text>
         )}
@@ -143,7 +158,45 @@ const VisualizarDados = () => {
                   </View>
                 </View>
                 <View style={styles.card2Body}>
-                  <ScrollView>
+                  {/* Status do seguro*/}
+                  {seguro ? (
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <MIcon name="security" size={30} color="green" />
+                      {new Date(seguro.data_validade) < new Date() ?
+                        <Text style={{ color: '#adad00ff', marginLeft: 6, fontSize: 12 }}> SEGURO: EXPIRADO {seguro.data_validade}</Text>
+                        :
+                        <Text style={{ color: 'green', marginLeft: 6, fontSize: 12 }}>SEGURO: ATIVO - {seguro.data_validade}</Text>
+                      }
+                    </View>
+                  ) : (
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <MIcon name="security" size={30} color="#d60000ff" />
+                      <Text style={{ color: '#d60000ff', marginLeft: 6, fontSize: 12 }}>INSEGURO</Text>
+                    </View>
+                  )}
+                  {/* Status da Inspeção */}
+                  {item.data_validade ? (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+                      <MIcon name="car-repair" size={30} color={item.inspecao_expirada ? "#d60000ff" : "green"} />
+                      {item.inspecao_expirada ?
+                        <Text style={{ color: '#adad00ff', marginLeft: 6, fontSize: 12 }}>
+                          INSPEÇÃO: EXPIRADA - {item.data_validade}
+                        </Text>
+                        :
+                        <Text style={{ color: 'green', marginLeft: 6, fontSize: 12 }}>
+                          INSPEÇÃO: VÁLIDA - {item.data_validade}
+                        </Text>
+                      }
+                    </View>
+                  ) : (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+                      <MIcon name="car-repair" size={30} color="#d60000ff" />
+                      <Text style={{ color: '#d60000ff', marginLeft: 6, fontSize: 12 }}>SEM INSPEÇÃO REGISTADA</Text>
+                    </View>
+                  )}
+
+
+                  <ScrollView nestedScrollEnabled={true}>
                     <Text style={styles.label}>Marca: {item.Marca}</Text>
                     <Text style={styles.label}>Modelo: {item.Modelo}</Text>
                     <Text style={styles.label}>Ano: {item.Ano}</Text>
@@ -169,6 +222,19 @@ const VisualizarDados = () => {
             <Text style={styles.noDataText}>Nenhum dado disponível.</Text>
           </View>
         )}
+        {/*seguro ? (
+          <View>
+            <Text>Id: {seguro.Id}</Text>
+            <Text>matricula_veiculo: {seguro.matricula_veiculo}</Text>
+            <Text>numero_seguro: {seguro.numero_seguro}</Text>
+            <Text>data_emissao: {seguro.data_emissao}</Text>
+            <Text>data_validade: {seguro.data_validade}</Text>
+            <Text>observacoes: {seguro.observacoes}</Text>
+            <Text>seguradora: {seguro.seguradora}</Text>
+          </View>
+        ) : (
+          <Text style={styles.textoCamecalho}>INSEGURO</Text>
+        )*/}
       </ScrollView>
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -188,12 +254,12 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   dadosRoubada: {
-    color: 'red',
     marginTop: 6,
     backgroundColor: 'white',
     width: '100%',
     padding: 10,
-    fontWeight: 800,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   container: {
     flex: 1,
@@ -282,7 +348,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 5,
     padding: 15,
-    width: '100%',
+    //width:'100%',
     flexDirection: 'column',
     alignItems: 'center',
     marginVertical: 10,
@@ -292,7 +358,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1, // Para Android
-
   },
   card2Header: {
     backgroundColor: '#cce6ff',
@@ -304,8 +369,6 @@ const styles = StyleSheet.create({
   card2Body: {
     width: '100%',
     marginTop: 15,
-    //alignItems: 'flex-start', // Garante que o conteúdo fique à esquerda
-    /*overflow: 'scroll',*/
     maxHeight: 270,
   },
   //costomozando os dados da viatura

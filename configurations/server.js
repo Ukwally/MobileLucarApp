@@ -57,6 +57,7 @@ app.get('/data/:matricola', (req, res) => {
                   FROM viatura v 
                   JOIN propriedade pr ON v.Matricola = pr.Matricola 
                   JOIN cidadao c ON pr.NumeroBI = c.NumeroBI 
+                  LEFT JOIN Inspecao i ON v.Matricola = i.matricula_veiculo
                   WHERE v.Matricola = ? 
                   AND (pr.DataFim IS NULL OR pr.DataFim = '0000-00-00')
                  `;
@@ -67,6 +68,30 @@ app.get('/data/:matricola', (req, res) => {
       res.status(500).send('Erro ao consultar o banco de dados');
       return;
     }
+
+
+    //ADICIONADO PAR Adicionar campo 'inspecao_expirada' para verificar se a inspeção está expirada
+    //JUNTO COM LEFT JOIN Inspecao i ON v.Matricola = i.matricula_veiculo
+
+    if (results.length > 0) {
+      results = results.map(item => {
+        if (item.data_validade) {
+          const dataValidade = new Date(item.data_validade);
+          const dataAtual = new Date();
+          item.inspecao_expirada = dataValidade < dataAtual;
+        }
+        return item;
+      });
+    }
+
+    /*
+      item.tem_inspecao = true;
+      } else {
+        item.tem_inspecao = false;
+      }
+    */
+
+
     console.log('Resultados da consulta:', results);
     res.json(results);
   });
@@ -133,6 +158,25 @@ app.get('/cidadao/:BI', (req, res) => {
   });
 });
 
+//BUSCAR SEGUROS
+app.get('/seguro/:Matricula', (req, res) => {
+  const Matricula = req.params.Matricula;
+  const query = `SELECT * FROM seguros WHERE matricula_veiculo = ? ORDER BY Id DESC  LIMIT 1`;
+  //const query = `SELECT *, data_validade < CURDATE() as expirado FROM seguros WHERE matricula_veiculo = ? ORDER BY Id DESC LIMIT 1`;
+  //depois é só verificar se o expirado é true ou false
+  dbDtser.query(query, [Matricula], (err, results) => {
+    if (err) {
+      console.error('Erro em seguros:', err);
+      res.status(500).send('Erro ao consultar o banco de dados');
+      return;
+    }
+    res.json(results);
+  });
+});
+
+
+//BUSCAR INSPEÇÃO
+
 //API login
 app.post('/login', (req, res) => {
   const { userId, password } = req.body; // Captura os dados do corpo da requisição
@@ -178,11 +222,6 @@ app.post('/login', (req, res) => {
     });
   });
 });
-
-
-
-
-
 
 //APARTIR DAQUI ESTÃO AS APIs EXTERNAS AO DTSER ( PARA CONSULTAR: CARTAS, VIATURAS ROUBADAS,  MULTAS )
 //API CONSULTA CARTAS (usando o banco externo_api)

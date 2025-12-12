@@ -4,6 +4,7 @@ import { StyleSheet, StatusBar, Text, View, TextInput, TouchableOpacity, ScrollV
 import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // para o logout
 import MIcon from 'react-native-vector-icons/MaterialIcons';
+import Logo from "../components/Logo";
 
 
 
@@ -66,7 +67,13 @@ export default function LoginScreen({ navigation }) {
           source={require('./assets/logo.png')}
           style={styles.logo}
         /> */}
-        <Text style={styles.logoText}>LUCAR</Text>
+        {/*<Text style={styles.logoText}>LUCAR</Text>*/}
+
+        <View style={styles.svg}>
+          <Logo width={225} height={90} />
+          {/*<Logo width={200} height={80} />*/}
+        </View>
+
         <Text style={styles.welcomeText}>Bem-vindo</Text>
 
         <TextInput
@@ -138,11 +145,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#87CEFA',
     justifyContent: 'center',
+    /*backgroundColor: '#61c0fcff',*/
   },
 
   header: {
     height: 60,
-    backgroundColor: '#4682B4',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     paddingHorizontal: 20,
     position: 'relative',
@@ -163,6 +171,9 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
+  svg: {
+    marginBottom: 40,
+  },
 
   logo: {
     width: 170,
@@ -180,7 +191,7 @@ const styles = StyleSheet.create({
 
   welcomeText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '400',
     marginBottom: 40,
     color: '#fff',
   },
@@ -198,6 +209,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 2,
     marginTop: 10,
+    /*backgroundColor: '#0087c5ff',*/
   },
   buttonText: {
     color: '#fff',
