@@ -81,7 +81,7 @@ const VisualizarHistorico = () => {
             <View key={item.Id} style={styles.card}>
               <TouchableOpacity>
                 <View style={styles.cardImageA}>
-                  <MIcon name="person" size={30} color="#a9cce3" />
+                  <MIcon name="person" size={30} color="#fff" />
                 </View>
               </TouchableOpacity>
               <View style={styles.textContainer}>
@@ -194,7 +194,9 @@ export const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#0086b3',
+    /*backgroundColor: '#0086b3',*/
+    backgroundColor: '#1a90cbb4',
+
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -244,10 +246,7 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopColor: '#a9cce3',
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-    borderTopWidth: 4,
+
   },
   footerText: {
     color: '#FFFFFF',

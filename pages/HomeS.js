@@ -125,7 +125,9 @@ const HomeS = ({ route }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeftSec}>
-          <FIcon name="user" size={20} color="#a9cce3" />
+          <View style={styles.userImage}>
+            <FIcon name="user" size={20} color="#1a90cb8e" />
+          </View>
           <Text style={styles.headerText}>{user.username}</Text>
         </View>
         <MIcon name="logout" onPress={handleLogout} size={20} color="#a9cce3" />
@@ -156,28 +158,28 @@ const HomeS = ({ route }) => {
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <View style={styles.footer}>
         <TouchableOpacity style={styles.iconContainer} onPress={pickImageAsync}>
-          <FIcon name="image" size={30} color="#a9cce3" />
+          <FIcon name="image" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Galeria</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Ccamera')}>
-          <MIcon name="camera" size={30} color="#a9cce3" />
-          <Text style={styles.iconText}>Foto</Text>
+          <MIcon name="camera" size={30} color="#1a90cbb4" />
+          <Text style={styles.iconText}>Câmara</Text>
         </TouchableOpacity>
 
 
         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('VisualizarCarta')}>
-          <FIcon name="credit-card" size={30} color="#a9cce3" />
+          <FIcon name="credit-card" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Carta</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconContainer} onPress={takePhotoAsync}>
-          <FIcon name="settings" size={30} color="#a9cce3" />
+          <FIcon name="settings" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Esboço</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Pesquisar', { user })}>
-          <FIcon name="pencil" size={30} color="#a9cce3" />
+          <FIcon name="pencil" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Texto</Text>
         </TouchableOpacity>
       </View>
@@ -198,21 +200,35 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     backgroundColor: '#f8f8f8',
-    paddingTop: 30,
     paddingHorizontal: 20,
+    paddingVertical: 15,
     alignItems: 'center',
     borderRadius: 2,
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    borderBottomWidth: 0.7,
+    borderBottomColor: '#fff'
   },
   headerLeftSec: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  userImage: {
+    backgroundColor: '#1780b51c',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#fff',
+
+  },
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
+    /*color: '#1780b5',*/
     color: '#2d5986',
     paddingHorizontal: 10,
   },
@@ -232,6 +248,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     padding: 10,
     backgroundColor: '#f8f8f8',
+    elevation: 20,
+    shadowColor: '#41506b',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   iconContainer: {
     alignItems: 'center',
@@ -252,6 +272,7 @@ const styles = StyleSheet.create({
   iconText: {
     marginTop: 5,
     fontSize: 12,
+    color: '#0c405a'
   },
 });
 

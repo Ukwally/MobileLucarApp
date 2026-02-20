@@ -18,7 +18,7 @@ const Pesquisar = ({ route }) => {
     }
 
     const endpoint = `http://192.168.43.22:3000/data/${matricula}`;
-    navigation.navigate('VisualizarDados', { endpoint, extractedText: matricula  });
+    navigation.navigate('VisualizarDados', { endpoint, extractedText: matricula });
   };
 
   // Função de logout
@@ -39,31 +39,31 @@ const Pesquisar = ({ route }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeftSec}>
-          <FIcon name="user" size={20} color="#a9cce3" />
+          <View style={styles.userImage}>
+            <FIcon name="user" size={20} color="#1a90cb8e" />
+          </View>
           {/*<Text style={styles.headerText}>{user.username}</Text>*/}
           <Text style={styles.headerText}>{user?.username || 'Técnico'}</Text>
 
         </View>
         <MIcon name="logout" onPress={handleLogout} size={20} color="#a9cce3" />
       </View>
-      <View style={styles.imageContainer}>
-        <View style={styles.inputView}>
-          <FIcon name="pencil" size={30} color="#a9cce3" />
-          <TextInput
-            style={styles.txtInput}
-            value={matricula}
-            onChangeText={setMatricula}
-            placeholder="Pesquisar Viatura..."
-          />
-          <TouchableOpacity style={styles.btnBuscar} onPress={handleNavigate}>
-            <Text style={styles.btnBuscarTxt}>BUSCAR</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.inputView}>
+        <MIcon name="search" size={30} color="#a9cce3" />
+        <TextInput
+          style={styles.txtInput}
+          value={matricula}
+          onChangeText={setMatricula}
+          placeholder="Pesquisar Viatura..."
+        />
+        <TouchableOpacity style={styles.btnBuscar} onPress={handleNavigate}>
+          <Text style={styles.btnBuscarTxt}>BUSCAR</Text>
+        </TouchableOpacity>
       </View>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <View style={styles.footer}>
         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.goBack()}>
-          <FIcon name="home" size={30} color="#a9cce3" />
+          <FIcon name="home" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Home</Text>
         </TouchableOpacity>
       </View>
@@ -82,17 +82,30 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     backgroundColor: '#f8f8f8',
-    paddingTop: 30,
     paddingHorizontal: 20,
+    paddingVertical: 15,
     alignItems: 'center',
     borderRadius: 2,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    borderBottomWidth: 0.7,
+    borderBottomColor: '#fff'
   },
   headerLeftSec: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  userImage: {
+    backgroundColor: '#1780b51c',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#fff',
+
   },
   headerText: {
     fontSize: 20,
@@ -112,6 +125,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     padding: 10,
     backgroundColor: '#f8f8f8',
+    elevation: 20,
+    shadowColor: '#41506b',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   iconContainer: {
     alignItems: 'center',
@@ -119,30 +136,38 @@ const styles = StyleSheet.create({
   iconText: {
     marginTop: 5,
     fontSize: 12,
+    color: '#0c405a'
   },
   inputView: {
+    margin: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    width: '90%',
+    justifyContent: 'space-between',
+    padding: 8,
+    elevation: 1,
+    shadowColor: '#41506b',
+
   },
   txtInput: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     height: 40,
-    fontSize: 16,
     borderColor: '#f1f1f1ff',
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 5,
+    paddingLeft: 10,
+    color: 'grey',
+    textTransform: 'uppercase',
+    marginLeft: 5,
+
   },
   btnBuscar: {
     backgroundColor: '#cce6ff',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    padding: 10,
     borderRadius: 4,
-    marginLeft: 10,
+    marginLeft: 8,
   },
 
   btnBuscarTxt: {

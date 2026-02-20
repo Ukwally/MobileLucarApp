@@ -128,7 +128,7 @@ const VisualizarDados = () => {
               <View style={styles.card}>
                 <TouchableOpacity>
                   <View style={styles.cardImageA}>
-                    <MIcon name="person" size={30} color="#a9cce3" />
+                    <MIcon name="person" size={30} color="#fff" />
                   </View>
                 </TouchableOpacity>
                 <View style={styles.textContainer}>
@@ -145,7 +145,7 @@ const VisualizarDados = () => {
                 <View style={styles.card2Header}>
                   <TouchableOpacity>
                     <View style={styles.cardImageA}>
-                      <FIcon name="car" size={30} color="#a9cce3" />
+                      <FIcon name="car" size={30} color="#fff" />
                     </View>
                   </TouchableOpacity>
                   <View style={styles.textContainer}>
@@ -160,24 +160,25 @@ const VisualizarDados = () => {
                 <View style={styles.card2Body}>
                   {/* Status do seguro*/}
                   {seguro ? (
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <MIcon name="security" size={30} color="green" />
+                    <View style={styles.alertLabel} marginTop='0' >
+                      <MIcon name="security" size={25} color="#0087c57c" />
                       {new Date(seguro.data_validade) < new Date() ?
+
                         <Text style={{ color: '#adad00ff', marginLeft: 6, fontSize: 12 }}> SEGURO: EXPIRADO {seguro.data_validade}</Text>
                         :
-                        <Text style={{ color: 'green', marginLeft: 6, fontSize: 12 }}>SEGURO: ATIVO - {seguro.data_validade}</Text>
+                        <Text style={{ color: '#008060', marginLeft: 6, fontSize: 12 }}>SEGURO: ATIVO - {seguro.data_validade}</Text>
                       }
                     </View>
                   ) : (
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <MIcon name="security" size={30} color="#d60000ff" />
+                    <View style={styles.alertLabel}>
+                      <MIcon name="security" size={25} color="#d60000ff" />
                       <Text style={{ color: '#d60000ff', marginLeft: 6, fontSize: 12 }}>INSEGURO</Text>
                     </View>
                   )}
                   {/* Status da Inspeção */}
                   {item.data_validade ? (
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                      <MIcon name="car-repair" size={30} color={item.inspecao_expirada ? "#d60000ff" : "green"} />
+                    <View style={styles.alertLabel}>
+                      <MIcon name="car-repair" size={25} color={item.inspecao_expirada ? "#d60000ff" : "green"} />
                       {item.inspecao_expirada ?
                         <Text style={{ color: '#adad00ff', marginLeft: 6, fontSize: 12 }}>
                           INSPEÇÃO: EXPIRADA - {item.data_validade}
@@ -189,8 +190,8 @@ const VisualizarDados = () => {
                       }
                     </View>
                   ) : (
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                      <MIcon name="car-repair" size={30} color="#d60000ff" />
+                    <View style={styles.alertLabel}>
+                      <MIcon name="car-repair" size={25} color="#0087c57c" />
                       <Text style={{ color: '#d60000ff', marginLeft: 6, fontSize: 12 }}>SEM INSPEÇÃO REGISTADA</Text>
                     </View>
                   )}
@@ -331,7 +332,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#0086b3',
+    /*backgroundColor: '#0086b3',*/
+    backgroundColor: '#1a90cbb4',
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -365,6 +367,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     //elevation: 1,
+    borderRadius: 6,
+
   },
   card2Body: {
     width: '100%',
@@ -372,10 +376,19 @@ const styles = StyleSheet.create({
     maxHeight: 270,
   },
   //costomozando os dados da viatura
+  alertLabel: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#0087c511',
+    padding: 4,
+    marginTop:3,
+    borderColor:'#0087c525',
+    borderWidth:1,
+    borderRadius:4,
+  },
   label: {
     flex: 1,
     fontWeight: 'bold',
-    color: 'green',
+    color: '#008060f1',
     backgroundColor: '#eaf5ff',
     marginVertical: 3,
     padding: 8,
@@ -416,10 +429,7 @@ const styles = StyleSheet.create({
     //bottom: 0,  //ATT DELTA  comentado para currigir a sobreposilção de teclas inferiores
     //left: 0,  //ATT DELTA  comentado para currigir a sobreposilção de teclas inferiores
     //right: 0,  //ATT DELTA  comentado para currigir a sobreposilção de teclas inferiores
-    borderTopColor: '#a9cce3',
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-    borderTopWidth: 4,
+
   },
   footerText: {
     color: '#FFFFFF',

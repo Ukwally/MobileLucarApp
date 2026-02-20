@@ -78,7 +78,9 @@ const VisualizarCidadao = () => {
         {data ? (
           <View style={styles.content}>
             <View style={styles.card1}>
-              <MIcon style={styles.icon} name="person" size={100} color="#a9cce3" />
+              <View style={styles.userImage}>
+                <MIcon name="person" size={60} color="#a9cce3" />
+              </View>
               <Text style={styles.nomeCidadao}>{data.Nome}</Text>
             </View>
             <View style={styles.card2}>
@@ -166,7 +168,6 @@ const styles = StyleSheet.create({
   },
   card1: {
     backgroundColor: 'white',
-    flex: 1,
     marginVertical: 5,
     borderRadius: 5,
     width: '100%',
@@ -179,6 +180,18 @@ const styles = StyleSheet.create({
     elevation: 1, // Para Android
 
   },
+  userImage: {
+    backgroundColor: '#1780b51c',
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    margin:5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#1780b51c',
+
+  },
   nomeCidadao: {
     textAlignVertical: 'center',
     fontWeight: '900',
@@ -187,7 +200,6 @@ const styles = StyleSheet.create({
   },
   card2: {
     backgroundColor: 'white',
-    flex: 3,
     marginVertical: 5,
     borderRadius: 5,
     padding: 10,
@@ -221,10 +233,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopColor: '#a9cce3',
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-    borderTopWidth: 4,
+
   },
   footerText: {
     color: '#FFFFFF',

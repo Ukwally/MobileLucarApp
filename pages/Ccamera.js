@@ -1,7 +1,7 @@
 import { Alert } from "react-native";
 import { useEffect, useState, useRef } from "react";
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from "react-native";
-import { Camera, useCameraDevice, useCameraPermission } from "react-native-vision-camera";
+//import { Camera, useCameraDevice, useCameraPermission } from "react-native-vision-camera";
 import { useNavigation } from "@react-navigation/native";
 import PhotoManipulator from 'react-native-photo-manipulator';//para recorte
 import AsyncStorage from '@react-native-async-storage/async-storage';// get user

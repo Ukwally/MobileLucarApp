@@ -89,13 +89,13 @@ const VisualizarCarta = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#007599" />
+      <StatusBar barStyle="light-content" backgroundColor="#0087c5db" />
       <View style={styles.header}>
         <Text style={styles.logoText}>LUCAR</Text>
 
       </View>
       <View style={styles.inputView}>
-        <FIcon name="pencil" size={30} color="#a9cce3" />
+        <MIcon name="search" size={30} color="#a9cce3"/>
         <TextInput
           style={styles.txtInput}
           value={searchText}
@@ -134,7 +134,7 @@ const VisualizarCarta = () => {
                 <View style={styles.card2Header}>
                   <TouchableOpacity>
                     <View style={styles.cardImageA}>
-                      <FIcon name="tag" size={30} color="#a9cce3" />
+                      <FIcon name="tag" size={30} color="#1a90cbb4" />
                     </View>
                   </TouchableOpacity>
                   <View style={styles.textContainer}>
@@ -143,13 +143,13 @@ const VisualizarCarta = () => {
                 </View>
                 <View style={styles.card2Body}>
                   <ScrollView>
-                    <Text style={styles.label}>id: {data.id}</Text>
-                    <Text style={styles.label}>nome: {data.nome}</Text>
-                    <Text style={styles.label}>numeroBI: {data.numeroBI}</Text>
-                    <Text style={styles.label}>dataNascimento: {data.dataNascimento}</Text>
-                    <Text style={styles.label}>emitido_por: {data.emitido_por}</Text>
-                    <Text style={styles.label}>data_emissao: {data.data_emissao}</Text>
-                    <Text style={styles.label}>data_expiracao: {data.data_expiracao}</Text>
+                    <Text style={styles.label}>ID:   <Text style={styles.labelSpan} >{data.id}</Text></Text>
+                    <Text style={styles.label}>Nome:   <Text style={styles.labelSpan} >{data.nome}</Text></Text>
+                    <Text style={styles.label}>Numero de BI:   <Text style={styles.labelSpan} >{data.numeroBI}</Text></Text>
+                    <Text style={styles.label}>Data de dascimento:   <Text style={styles.labelSpan} >{data.dataNascimento}</Text></Text>
+                    <Text style={styles.label}>Emitido por:   <Text style={styles.labelSpan} >{data.emitido_por}</Text></Text>
+                    <Text style={styles.label}>Data emissao:   <Text style={styles.labelSpan} >{data.data_emissao}</Text></Text>
+                    <Text style={styles.label}>Data expiracao:   <Text style={styles.labelSpan} >{data.data_expiracao}</Text></Text>
                   </ScrollView>
                 </View>
               </View>
@@ -162,9 +162,11 @@ const VisualizarCarta = () => {
         )}
       </ScrollView>
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+
+        <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.goBack()}>
           <Text style={styles.footerText}>VOLTAR</Text>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={handleLogout}>
           <MIcon name="logout" size={20} color="#a9cce3" />
         </TouchableOpacity>
@@ -177,6 +179,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: '#f8f8f8'
   },
   msgConsulta: {
     flex: 1,
@@ -191,7 +194,8 @@ const styles = StyleSheet.create({
   header: {
     height: 60,
     paddingTop: 15,
-    backgroundColor: '#007599',
+    /*backgroundColor: '#007599',*/
+    backgroundColor: '#0087c5db',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -209,26 +213,30 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   inputView: {
-    marginTop: 60,
+    marginTop: 65,
+    margin: 5,
     backgroundColor: 'white',
     borderColor: '#a9cce3',
-    borderWidth: 2,
+    borderWidth: 0.5,
+    borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '100%',
     padding: 5,
+    elevation: 10,
     // position:'absolute',
     // zIndex:1
   },
   txtInput: {
-    backgroundColor: 'whitesmoke',
-    width: '60%',
+    backgroundColor: '#f9f9f9',
+    flex: 1,
+    marginHorizontal: 5,
     height: 40,
-    marginLeft: 10,
     color: 'grey',
     fontWeight: '800',
     textTransform: 'uppercase',
+    borderRadius: 5,
+    paddingLeft: 10,
   },
   btnBuscar: {
     backgroundColor: '#cce6ff',
@@ -256,7 +264,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   textoErroDataCarta: {
-    backgroundColor: 'yellow',
+    backgroundColor: '#caae32',
     borderRadius: 5,
     padding: 5,
     width: '100%',
@@ -264,12 +272,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 5,
     marginHorizontal: 20,
-    shadowColor: '#000',
-    shadowRadius: 5,
-    elevation: 1,
+
   },
   textoErroDataCartatxtExp: {
-    color: 'red',
+    color: 'white',
     fontWeight: 'bold',
   },
   textoErroDataCartatxt: {
@@ -283,20 +289,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 60, // altura do rodapé
     paddingHorizontal: 10,
-    backgroundColor: '#e6f2ff',
+    backgroundColor: '#f8f8f8',
+    /*backgroundColor: '#e6f2ff'*/
+
   },
-  contentText: {
-    fontSize: 16,
+  noDataContainer: {
+    flex: 1,
+    justifyContent: 'center'
   },
+  noDataText: {
+    color: 'grey',
+  },
+  //contentText: {
+  //  fontSize: 16,
+  //},
   //start card
   cardImageA: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#0086b3',
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    borderWidth: 0.7,
+    borderColor: '#fff',
+    backgroundColor: '#1a90cb44',
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 3,
   },
   cardImageB: {
     width: 50,
@@ -318,7 +336,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 1, // Para Android
+    elevation: 0, // Para Android
+
+    borderWidth: 0.7,
+    borderColor: '#e6e6e6',
+
   },
   card2Header: {
     backgroundColor: '#cce6ff',
@@ -326,6 +348,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     //elevation: 1,
+    borderRadius: 6,
   },
   card2Body: {
     width: '100%',
@@ -336,10 +359,15 @@ const styles = StyleSheet.create({
   label: {
     flex: 1,
     fontWeight: 'bold',
-    color: 'green',
+    color: '#008060f1',
     backgroundColor: '#eaf5ff',
     marginVertical: 3,
     padding: 8,
+  },
+  labelSpan: {
+    fontWeight: '400',
+    color: '#008060',
+
   },
   textContainer: {
     flex: 1,
@@ -352,7 +380,8 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     fontSize: 14,
-    color: '#333',
+    color: '#666666',
+    fontWeight: '500',
   },
   iconWrapper: {
     justifyContent: 'center', // Centraliza o ícone verticalmente
@@ -366,7 +395,12 @@ const styles = StyleSheet.create({
   //FOOTER COSTOMISATION 
   footer: {
     height: 60,
-    backgroundColor: '#007599',
+    /*backgroundColor: '#007599',*/
+    backgroundColor: '#e6f2ff',
+    elevation: 20,
+    shadowColor: '#41506b',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -375,10 +409,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopColor: '#a9cce3',
+    borderTopColor: 'white',
     borderTopLeftRadius: 3,
     borderTopRightRadius: 3,
-    borderTopWidth: 4,
+    borderTopWidth: 1,
+  },
+  footerBtn: {
+    backgroundColor: '#0087c5bf',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
   },
   footerText: {
     color: '#FFFFFF',

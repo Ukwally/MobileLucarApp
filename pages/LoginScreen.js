@@ -52,7 +52,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#4682B4" />
+      <StatusBar barStyle="light-content" backgroundColor="#0087c5ff"/>
 
       {/* Cabeçalho com botão de configurações */}
       <View style={styles.header}>
@@ -141,6 +141,7 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  
   container: {
     flex: 1,
     backgroundColor: '#87CEFA',
@@ -204,12 +205,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button: {
-    backgroundColor: '#4682B4',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 2,
     marginTop: 10,
-    /*backgroundColor: '#0087c5ff',*/
+    backgroundColor: '#0087c5bf',
+    /*
+    backgroundColor: '#4682B4',
+    */
   },
   buttonText: {
     color: '#fff',
@@ -217,7 +220,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   privacyPolicy: {
-    marginTop: 20,
+    marginTop: 100,
     color: '#fff',
     textDecorationLine: 'underline',
   },

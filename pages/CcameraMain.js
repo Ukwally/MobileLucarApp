@@ -1,4 +1,5 @@
 //Camera Reacn-native-vision-camera do Video do YOUTUBE
+/*
 import { useEffect, useState, useRef } from "react";
 import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from "react-native";
 import { Camera, useCameraDevice, useCameraPermission, useMicrophonePermission } from "react-native-vision-camera";
@@ -83,4 +84,4 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-});
+});*/
