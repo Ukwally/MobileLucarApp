@@ -64,7 +64,7 @@ const Pesquisar = ({ route }) => {
       <View style={styles.footer}>
         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.goBack()}>
           <FIcon name="home" size={30} color="#1a90cbb4" />
-          <Text style={styles.iconText}>Home</Text>
+          <Text style={styles.iconText}>Página Pricipal</Text>
         </TouchableOpacity>
       </View>
     </View>

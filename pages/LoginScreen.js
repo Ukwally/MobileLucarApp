@@ -97,7 +97,7 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
 
         <Text style={styles.privacyPolicy}>
-          Políticas e Regulamentos
+          Powered by Elisabeth Pedro
         </Text>
       </ScrollView>
       {/* Modal de Configurações */}
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   
   container: {
     flex: 1,
-    backgroundColor: '#87CEFA',
+    backgroundColor: '#57acd8',
     justifyContent: 'center',
     /*backgroundColor: '#61c0fcff',*/
   },
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 2,
+    borderRadius: 5,
     marginTop: 10,
     backgroundColor: '#0087c5bf',
     /*
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   privacyPolicy: {
     marginTop: 100,
-    color: '#fff',
+    color: '#f1f1f1',
     textDecorationLine: 'underline',
   },
 

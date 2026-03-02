@@ -18,6 +18,23 @@ const VisualizarCidadao = () => {
   const navigation = useNavigation();
 
 
+  const goHome = async () => {
+    //by elisabeth
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      const user = userData ? JSON.parse(userData) : null; //get User
+
+      if (user) {
+        navigation.navigate('HomeS', { user: user })
+      } else {
+        alert('ERRO: Me desculpe, Use a tecla VOLTAR abaixo');
+      }
+
+    } catch (error) {
+      console.log('Erro: Tenta pegar dados do usuário', error.message)
+    }
+  }
+
   //para logout      LD-404-AO
   const handleLogout = async () => {
     try {
@@ -64,11 +81,11 @@ const VisualizarCidadao = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#007599" />
+      <StatusBar barStyle="light-content" backgroundColor="#1a90cbbd" />
       <View style={styles.header}>
         <Text style={styles.logoText}>LUCAR</Text>
-        <TouchableOpacity>
-          <MIcon name="menu" size={30} color="#FFFFFF" />
+        <TouchableOpacity style={styles.headerIcon} onPress={goHome} >
+          <FIcon name="home" size={23} color="#f7f7f7" />
         </TouchableOpacity>
       </View>
       <View style={styles.main}>
@@ -79,28 +96,40 @@ const VisualizarCidadao = () => {
           <View style={styles.content}>
             <View style={styles.card1}>
               <View style={styles.userImage}>
-                <MIcon name="person" size={60} color="#a9cce3" />
+                <MIcon name="person" size={60} color="#fff" />
               </View>
               <Text style={styles.nomeCidadao}>{data.Nome}</Text>
             </View>
             <View style={styles.card2}>
+
               <View style={styles.cardRow}>
-                <View>
-                  <MIcon style={styles.icon} name="fingerprint" size={20} color="#007599" />
+                <View style={styles.iconCard}>
+                  <MIcon style={styles.icon} name="fingerprint" size={20} color="#fff" />
                 </View>
-                <View><Text>BI: {data.NumeroBI}</Text></View>
+                <View>
+                  <Text style={styles.RowTxt}>BI: <Text style={styles.RowTxtSpan}>{data.NumeroBI}</Text></Text>
+                </View>
               </View>
+
               <View style={styles.cardRow}>
-                <MIcon style={styles.icon} name="location-on" size={20} color="#007599" />
-                <Text>Morada: {data.Endereco}</Text>
+                <View style={styles.iconCard}>
+                  <MIcon style={styles.icon} name="location-on" size={20} color="#fff" />
+                </View>
+                <Text style={styles.RowTxt}>Morada: <Text style={styles.RowTxtSpan}>{data.Endereco}</Text>  </Text>
               </View>
+
               <View style={styles.cardRow}>
-                <FIcon style={styles.icon} name="venus" size={15} color="#007599" />
-                <Text>Genero: {data.genero}</Text>
+                <View style={styles.iconCard}>
+                  <FIcon style={styles.icon} name="venus" size={18} color="#fff" />
+                </View>
+                <Text style={styles.RowTxt}>Genero: <Text style={styles.RowTxtSpan}>{data.genero}</Text> </Text>
               </View>
+
               <View style={styles.cardRow}>
-                <FIcon style={styles.icon} name="calendar" size={15} color="#007599" />
-                <Text>Nascimento: {data.DataNascimento}</Text>
+                <View style={styles.iconCard}>
+                  <FIcon style={styles.icon} name="calendar" size={16} color="#fff" />
+                </View>
+                <Text style={styles.RowTxt}>Nascimento: <Text style={styles.RowTxtSpan}>{data.DataNascimento}</Text></Text>
               </View>
             </View>
           </View>
@@ -111,11 +140,11 @@ const VisualizarCidadao = () => {
         )}
       </View>
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={styles.footerBtn} onPress={() => navigation.goBack()}>
           <Text style={styles.footerText}>VOLTAR</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleLogout}>
-          <MIcon name="logout" size={20} color="#a9cce3" />
+          <MIcon name="logout" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
     </View>
@@ -126,7 +155,8 @@ const styles = StyleSheet.create({
   header: {
     height: 60,
     paddingTop: 15,
-    backgroundColor: '#007599',
+    /*backgroundColor: '#007599',*/
+    backgroundColor: '#1a90cbb4',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -140,10 +170,19 @@ const styles = StyleSheet.create({
   textoCamecalho: {
     color: 'grey',
     marginTop: 6,
+    fontWeight: '300',
+    fontSize: 13,
   },
   container: {
     flex: 1,
     flexDirection: 'column',
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  noDataText: {
+    color: 'grey',
   },
 
   logoText: {
@@ -152,6 +191,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     padding: 4,
   },
+  headerIcon: {
+    backgroundColor: '#ffffff1a',
+    height: 30,
+    width: 50,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
 
   // SCROLL CONTENT COSTOMIZATION
   main: {
@@ -173,23 +221,35 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
 
-    shadowColor: '#000',
+    shadowColor: '#005780',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 1, // Para Android
+    elevation: 10, // Para Android
+
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: '#98d0ec',
+    borderStyle: 'solid',
+    //backgroundColor:'#85c8eb' //Golden card color
+    //backgroundColor:'#57acd8'
 
   },
   userImage: {
-    backgroundColor: '#1780b51c',
+    //backgroundColor: '#98d0ec',
+    //backgroundColor: '#1780b509',
+    //backgroundColor: '#1a90cb60',//cor do footer claro da pagina ver dados
+    backgroundColor: '#98d0ec',
     width: 76,
     height: 76,
     borderRadius: 38,
-    margin:5,
+    margin: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#1780b51c',
+    borderWidth: 0.9,
+    //borderColor: '#1780b51c',
+    borderColor: '#fff',
+    borderStyle: 'dashed',
 
   },
   nomeCidadao: {
@@ -199,32 +259,59 @@ const styles = StyleSheet.create({
     color: '#007599',
   },
   card2: {
+    //backgroundColor: '#7ac7ee',
     backgroundColor: 'white',
     marginVertical: 5,
     borderRadius: 5,
     padding: 10,
 
-    shadowColor: '#000',
+    shadowColor: '#005780',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 1, // Para Android
+    elevation: 10, // Para Android
+
 
   },
   cardRow: {
-    backgroundColor: '#cce6ff',
-    //backgroundColor:'#eaf5ff',
+    //backgroundColor: '#cce6ff',
+    backgroundColor: '#eaf5ff',
     flexDirection: 'row', // Para alinhar ícone e texto em linha
     alignItems: 'center',
-    marginVertical: 4,
+    marginVertical: 3,
     borderRadius: 3,
-    padding: 10,
+    padding: 8,
+
+
+    borderColor: '#1a90cbb4',
+    borderWidth: 0.5,
+    borderStyle: 'dashed',
   },
-  icon: { marginRight: 10 },
+  iconCard: {
+    /*backgroundColor: '#ffffff48',*/
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+
+  },
+  icon: {
+    borderRadius: 10,
+    color: '#1a90cbb4'
+  },
+  RowTxt: {
+    //color: '#608080',
+    color: '#404040',
+  },
+  RowTxtSpan: {
+    color: '#404040',
+  },
   //FOOTER COSTOMISATION 
   footer: {
     height: 60,
-    backgroundColor: '#007599',
+    backgroundColor: '#1a90cbb4',
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -235,9 +322,20 @@ const styles = StyleSheet.create({
     right: 0,
 
   },
+  footerBtn: {
+    backgroundColor: '#ffffff00',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+
+    borderWidth: 0.5,
+    borderColor: '#ffffff96',
+    borderStyle: 'solid',
+  },
   footerText: {
-    color: '#FFFFFF',
-    fontSize: 15,
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '400',
   },
 
 });

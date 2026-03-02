@@ -76,10 +76,10 @@ const Logo = (props) => (
           id="Direcção_de_Trânsito_e_Segurança_Rodoviária"
           data-name="Direcção de Trânsito e Segurança Rodoviária"
           transform="translate(0 35.283)"
-          fill="white"
+          fill="whitesmoke"
           fontSize="15"
           fontFamily="Helvetica-Bold"
-          fontWeight="700"
+          fontWeight="400"
           letterSpacing="-0.03em"
         >
           <Text x="0" y="0">Direcção de Trânsito</Text>

@@ -95,7 +95,7 @@ const VisualizarCarta = () => {
 
       </View>
       <View style={styles.inputView}>
-        <MIcon name="search" size={30} color="#a9cce3"/>
+        <MIcon name="search" size={30} color="#a9cce3" />
         <TextInput
           style={styles.txtInput}
           value={searchText}
@@ -262,6 +262,8 @@ const styles = StyleSheet.create({
   textoCamecalho: {
     color: 'grey',
     marginTop: 6,
+    fontWeight: '300',
+    fontSize: 13,
   },
   textoErroDataCarta: {
     backgroundColor: '#caae32',
@@ -340,7 +342,6 @@ const styles = StyleSheet.create({
 
     borderWidth: 0.7,
     borderColor: '#e6e6e6',
-
   },
   card2Header: {
     backgroundColor: '#cce6ff',
@@ -351,8 +352,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   card2Body: {
-    width: '100%',
     marginTop: 15,
+    flexDirection:'row',
     /*overflow: 'scroll',*/
   },
   //costomozando os dados da viatura
@@ -363,6 +364,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#eaf5ff',
     marginVertical: 3,
     padding: 8,
+    borderRadius:2,
   },
   labelSpan: {
     fontWeight: '400',

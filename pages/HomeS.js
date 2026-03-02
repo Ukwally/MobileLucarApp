@@ -174,7 +174,7 @@ const HomeS = ({ route }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.iconContainer} onPress={takePhotoAsync}>
-          <FIcon name="settings" size={30} color="#1a90cbb4" />
+          <MIcon name="settings" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Esboço</Text>
         </TouchableOpacity>
 
