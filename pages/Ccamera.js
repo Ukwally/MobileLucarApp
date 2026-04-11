@@ -14,6 +14,24 @@ export default function Ccamera() {
     const cameraRef = useRef(null);
     const navigation = useNavigation();
 
+
+    const goHome = async () => {
+        //by elisabeth
+        try {
+            const userData = await AsyncStorage.getItem('userData');
+            const user = userData ? JSON.parse(userData) : null; //get User
+
+            if (user) {
+                navigation.navigate('HomeS', { user: user })
+            } else {
+                alert('ERRO: Me desculpe, Use a tecla VOLTAR abaixo');
+            }
+
+        } catch (error) {
+            console.log('Erro: Tenta pegar dados do usuário', error.message)
+        }
+    }
+
     useEffect(() => {
         (async () => {
             const status = await requestPermission();
@@ -80,6 +98,14 @@ export default function Ccamera() {
     return (
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="#e0e1e6" />
+
+            <View style={styles.header}>
+                <Text style={styles.logoText}>LUCAR</Text>
+                <TouchableOpacity style={styles.headerIcon} onPress={goHome} >
+                    <FIcon name="home" size={23} color="#f7f7f7" />
+                </TouchableOpacity>
+            </View>
+
             <Camera
                 style={StyleSheet.absoluteFill}
                 //style={{ flex: 0.5 }} // apenas metade da tela pelo corte
@@ -88,7 +114,7 @@ export default function Ccamera() {
                 isActive={true}
                 photo={true}  // IMPORTANTE: Somente fotos
             />
-            < View style={styles.limite} />
+            <View style={styles.limite} />
 
             <TouchableOpacity
                 onPress={takePhoto}
@@ -112,13 +138,42 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    header: {
+        height: 60,
+        paddingTop: 15,
+        backgroundColor: '#57add8de',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        position: 'absolute',
+        zIndex: 1,
+        top: 1,
+        left: 0,
+        right: 0,
+        elevation: 5,
+    },
+    logoText: {
+        fontSize: 25,
+        fontWeight: '300',
+        color: '#fff',
+        padding: 4,
+    },
+    headerIcon: {
+        backgroundColor: '#ffffff1a',
+        height: 30,
+        width: 50,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     limite: {
         position: 'absolute',
         top: '35%',  // 25% da altura da tela (centrado)
         left: '5%', // 25% da largura da tela (centrado)
         width: '90%',  // 50% da largura da tela
         height: '30%', // 50% da altura da tela
-        borderWidth: 4,
+        borderWidth: 3,
         borderColor: '#a9cce3', // Cor do contorno do retângulo
         backgroundColor: 'transparent', // Transparente para ser apenas o contorno
     },

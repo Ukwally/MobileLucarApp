@@ -173,10 +173,11 @@ const HomeS = ({ route }) => {
           <Text style={styles.iconText}>Carta</Text>
         </TouchableOpacity>
 
+        {/*
         <TouchableOpacity style={styles.iconContainer} onPress={takePhotoAsync}>
           <MIcon name="settings" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Esboço</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>  */}
 
         <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Pesquisar', { user })}>
           <FIcon name="pencil" size={30} color="#1a90cbb4" />
@@ -209,6 +210,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 0.7,
     borderBottomColor: '#fff'
+
+    /*
+    top: 3,
+    backgroundColor: '#0087c5db',
+    width: '98%',
+    borderBottomRightRadius: 10,
+    borderBottomStartRadius: 10,
+    borderTopEndRadius: 10,
+    borderTopStartRadius: 10,
+    */
   },
   headerLeftSec: {
     flexDirection: 'row',
@@ -223,7 +234,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#fff',
-
+    //borderStyle: 'dashed',
   },
   headerText: {
     fontSize: 20,

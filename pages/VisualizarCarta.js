@@ -312,6 +312,7 @@ const styles = StyleSheet.create({
     borderRadius: 22.5,
     borderWidth: 0.7,
     borderColor: '#fff',
+    borderStyle: 'dashed',
     backgroundColor: '#1a90cb44',
     marginRight: 10,
     justifyContent: 'center',
@@ -353,22 +354,22 @@ const styles = StyleSheet.create({
   },
   card2Body: {
     marginTop: 15,
-    flexDirection:'row',
+    flexDirection: 'row',
     /*overflow: 'scroll',*/
   },
   //costomozando os dados da viatura
   label: {
     flex: 1,
-    fontWeight: 'bold',
-    color: '#008060f1',
+    fontWeight: 500,
+    //color: '#008060f1',
+    color: '#333',
     backgroundColor: '#eaf5ff',
     marginVertical: 3,
     padding: 8,
-    borderRadius:2,
+    borderRadius: 2,
   },
   labelSpan: {
-    fontWeight: '400',
-    color: '#008060',
+    color: '#333',
 
   },
   textContainer: {

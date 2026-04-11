@@ -1,11 +1,10 @@
 //LOGIN COM FETCH
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, StatusBar, Text, View, TextInput, TouchableOpacity, ScrollView, Image, Modal, Pressable, Alert } from 'react-native';
 import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // para o logout
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import Logo from "../components/Logo";
-
 
 
 export default function LoginScreen({ navigation }) {
@@ -14,6 +13,64 @@ export default function LoginScreen({ navigation }) {
   const [userId, setUserId] = useState(''); // Estado para o ID
   const [password, setPassword] = useState('');
   const [userData, setUserData] = useState(null);
+  const [menuVisivel, setMenuVisivel] = useState(false);
+
+  useEffect(() => {  //para não ser necessário fazer login sempre que abro e fecho a tela
+    const verificarLogin = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const storedUserData = await AsyncStorage.getItem('userData');
+
+        if (token && storedUserData) {
+          const user = JSON.parse(storedUserData);
+          navigation.replace('HomeS', { user });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    verificarLogin();
+
+  }, []);
+
+  useEffect(() => {
+    const carregarUsuarioPadrao = async () => {
+      try {
+        const saved = await AsyncStorage.getItem('defaultUser');
+        if (saved) {
+          const { userId, password } = JSON.parse(saved);
+          setUserId(userId);
+          setPassword(password);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    carregarUsuarioPadrao();
+  }, []);
+
+
+  const salvarUsuarioPadrao = async () => {
+    try {
+      await AsyncStorage.setItem('defaultUser', JSON.stringify({
+        userId,
+        password,
+      }));
+      Alert.alert('Sucesso', 'Usuário guardado!');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  const removerUsuarioPadrao = async () => {
+    try {
+      await AsyncStorage.removeItem('defaultUser');
+      setUserId('');
+      setPassword('');
+      Alert.alert('Removido', 'Usuário padrão apagado');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleLogin = async () => {
     if (!userId || !password) {
@@ -40,7 +97,7 @@ export default function LoginScreen({ navigation }) {
 
 
         setUserData(data.user);
-        navigation.navigate('HomeS', { user: data.user });
+        navigation.replace('HomeS', { user: data.user });
       } else {
         Alert.alert('Erro', 'Credenciais erradas');
       }
@@ -48,11 +105,14 @@ export default function LoginScreen({ navigation }) {
       console.error('Erro ao conectar ao servidor:', error);
       Alert.alert('Erro', 'Erro ao conectar ao servidor');
     }
+    console.log(data);
+
   };
+
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0087c5ff"/>
+      <StatusBar barStyle="light-content" backgroundColor="#0087c5ff" />
 
       {/* Cabeçalho com botão de configurações */}
       <View style={styles.header}>
@@ -118,12 +178,36 @@ export default function LoginScreen({ navigation }) {
           />
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Configurações</Text>
-            <TouchableOpacity style={styles.modalButton} >
-              <Text style={styles.modalButtonText}>DESFAZER USUÁRIO</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={() => setMenuVisivel(!menuVisivel)} >
+              <Text style={styles.modalButtonText}>PREDEFINIR USUÁRIO</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.modalButton} >
-              <Text style={styles.modalButtonText}>DEFINIR USUÁRIO PADRÃO</Text>
+            {menuVisivel && (
+              <View style={styles.Modallista}>
+                <TextInput
+                  style={styles.Modalinput}
+                  placeholder="ID"
+                  placeholderTextColor="#aaa"
+                  value={userId}
+                  onChangeText={setUserId}
+                />
+                <TextInput
+                  style={styles.Modalinput}
+                  placeholder="Senha"
+                  placeholderTextColor="#aaa"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity style={styles.modalCloseButton} onPress={salvarUsuarioPadrao}>
+                  <MIcon name='save' color={'#fff'} size={20} />
+                  <Text style={styles.modalButtonText}>GUARDAR USUÁRIO</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <TouchableOpacity style={styles.modalButton} onPress={removerUsuarioPadrao}>
+              <Text style={styles.modalButtonText}>DESFAZER USUÁRIO PADRÃO</Text>
             </TouchableOpacity>
             <Pressable
               style={styles.modalCloseButton}
@@ -141,7 +225,7 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  
+
   container: {
     flex: 1,
     backgroundColor: '#57acd8',
@@ -203,6 +287,8 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     paddingHorizontal: 10,
     marginBottom: 15,
+    color:'#2d4753bf',
+    fontWeight:'500',
   },
   button: {
     paddingVertical: 10,
@@ -237,11 +323,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     alignItems: 'center',
+
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.9,
+    shadowColor: '#005780',
+    shadowRadius: 5,
+    elevation: 10, // Para Android
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  Modallista: {
+    width: '100%',
+  },
+  Modalinput: {
+    marginTop: 10,
+    height: 40,
+    backgroundColor: '#e2ecec',
+    borderRadius: 2,
+    paddingHorizontal: 10,
   },
   modalButton: {
     width: '100%',
@@ -254,15 +356,20 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: 'white',
     fontSize: 16,
+    textAlign: 'center',
   },
   modalCloseButton: {
     marginTop: 20,
     padding: 10,
     backgroundColor: '#5499c7',
     borderRadius: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   modalCloseButtonText: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -274,5 +381,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
 });

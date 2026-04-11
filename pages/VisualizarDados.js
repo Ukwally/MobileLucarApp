@@ -204,18 +204,18 @@ const VisualizarDados = () => {
                       <MIcon name="car-repair" size={25} color={item.inspecao_expirada ? "#d60000ff" : "green"} />
                       {item.inspecao_expirada ?
                         <Text style={{ color: '#adad00ff', marginLeft: 6, fontSize: 12 }}>
-                          INSPEÇÃO: EXPIRADA - {item.data_validade}
+                          INSPEÇÃO PERIÓDICA: EXPIRADA - {item.data_validade}
                         </Text>
                         :
                         <Text style={{ color: 'green', marginLeft: 6, fontSize: 12 }}>
-                          INSPEÇÃO: VÁLIDA - {item.data_validade}
+                          INSPEÇÃO PERIÓDICA: VÁLIDA - {item.data_validade}
                         </Text>
                       }
                     </View>
                   ) : (
                     <View style={styles.alertLabel}>
                       <MIcon name="car-repair" size={25} color="#d60000ff" />
-                      <Text style={{ color: '#d60000ff', marginLeft: 6, fontSize: 12 }}>SEM INSPEÇÃO REGISTADA</Text>
+                      <Text style={{ color: '#d60000ff', marginLeft: 6, fontSize: 12 }}>SEM INSPEÇÃO PERIÓDICA REGISTADA</Text>
                     </View>
                   )}
 
