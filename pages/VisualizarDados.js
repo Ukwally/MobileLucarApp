@@ -7,6 +7,7 @@ import FIcon from 'react-native-vector-icons/FontAwesome';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; //para o logout //para pegar o user
+import { Audio } from 'expo-av';
 
 
 const localImage = require('../assets/logo.png');
@@ -22,6 +23,8 @@ const VisualizarDados = () => {
   const [error, setError] = useState(null);
   const { extractedText } = route.params || {};
   const { endpoint } = route.params || {};
+  //const [totalRoubadasHoje, setTotalRoubadasHoje] = useState(0);
+
 
   const goHome = async () => {
     //by elisabeth
@@ -68,12 +71,27 @@ const VisualizarDados = () => {
         setError(err);
       }
     };
+    //ATT REMOVER ABAIXO: BUSCAR TOTAL ROUBADAS HOJE
+    /*const fetchTotalRoubadasHoje = async () => {
+      try {
+        const res = await fetch('http://192.168.43.22:3000/viaturas-roubadas/');
+        const json = await res.json();
+        setTotalRoubadasHoje(json[0].totalRoubadasHoje);
+      } catch (err) {
+        console.log("Erro ao buscar total roubadas hoje:", err.message);
+      }
+    };*/
 
     const fetchRoubadas = async () => {
       try {
         const res = await fetch(`http://192.168.43.22:3000/viaturas-roubadas/${extractedText}`);
         const json = await res.json();
+        const isRoubada = json.length > 0;
         setDadosRoubada(json.length > 0);
+
+        if (isRoubada) {
+          playAlarm();
+        }
       } catch (err) {
         setError(err);
       }
@@ -95,12 +113,19 @@ const VisualizarDados = () => {
       setLoading(false);
     };
 
-
     if (endpoint && extractedText) {
       fetchAll();
     }
+    //fetchTotalRoubadasHoje(); // ATT REMOVER
+
   }, [endpoint, extractedText]);
 
+  const playAlarm = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../assets/beeps/lucaralert3.mp3')
+    );
+    await sound.playAsync();
+  };
 
   if (loading) {
     return (
@@ -139,8 +164,16 @@ const VisualizarDados = () => {
         ) : (
           <Text style={styles.textoCamecalho}>VIATURA PESQUISADA: {extractedText || "Nenhum texto extraído"}</Text>
         )}
-        <View>
-        </View>
+        <View></View>
+
+        {/*totalRoubadasHoje > 0 && (
+          <View style={styles.RoubadaHoje}>
+            <MIcon name="warning" size={30} color="#caae32f6" />
+            <Text style={{ color: '#fff', fontWeight: 800, marginLeft: 7 }}>
+              Total de viaturas roubadas hoje: {totalRoubadasHoje}
+            </Text>
+          </View>
+        )*/}
         {data && data.length > 0 ? (
           data.map(item => (
             <View key={item.Matricola}>
@@ -315,7 +348,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    elevation:5,
+    elevation: 5,
   },
   logoText: {
     fontSize: 25,
@@ -385,7 +418,7 @@ const styles = StyleSheet.create({
     /*backgroundColor: '#0086b3',*/
     backgroundColor: '#57acd8',
     marginRight: 10,
-   
+
     justifyContent: 'center',
     alignItems: 'center',
 

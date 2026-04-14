@@ -15,7 +15,7 @@ export default function LoginScreen({ navigation }) {
   const [userData, setUserData] = useState(null);
   const [menuVisivel, setMenuVisivel] = useState(false);
 
-  useEffect(() => {  //para não ser necessário fazer login sempre que abro e fecho a tela
+  useEffect(() => {  //para não ser necessário fazer login sempre que abrir e fechar a tela, ATT: REVER, POIS TALVES FAÇA LAGIN DUAS VESES, REQUISITANDPO DESNECESSARIAMENTE
     const verificarLogin = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
@@ -61,6 +61,8 @@ export default function LoginScreen({ navigation }) {
       console.error(error);
     }
   }
+
+
   const removerUsuarioPadrao = async () => {
     try {
       await AsyncStorage.removeItem('defaultUser');

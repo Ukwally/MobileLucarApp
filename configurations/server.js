@@ -282,6 +282,23 @@ app.get('/viaturas-roubadas/:matricula', (req, res) => {
   });
 });
 
+// CUNSULTAR ROUBADAS PARA NOTIFICACÃO
+app.get('/viaturas-roubadas/', (req, res) => {
+  const sql = `
+    SELECT COUNT(*) AS totalRoubadasHoje 
+    FROM viaturasroubadas
+    WHERE DATE(created_at) = CURDATE()
+  `;
+  dbDtser.query(sql, (err, results) => {
+    if (err) {
+      console.error('Erro ao buscar Total Roubadas:', err);
+      return res.status(500).json({ error: 'Erro ao buscar Total Roubadas' });
+    }
+    res.json(results);
+  });
+});
+
+
 
 
 
