@@ -99,13 +99,16 @@ const HomeS = ({ route }) => {
     )
       .then((response) => response.json())
       .then((result) => {
+        //setExtractedText(result["all_text"]); // versão anterior removida para padronizarMatricula antes de setExtractedText
 
-        setExtractedText(result["all_text"]);
-
+        // ABAIXO ADIONADO PARA padronizarMatricula ANDES DE setExtractedText
+        const textoOCR = result["all_text"];
+        const textoPadronizado = padronizarMatricula(textoOCR);
+        setExtractedText(textoPadronizado);
+        // FIM DO ADIONADO PARA padronizarMatricula ANDES DE setExtractedText
       })
       .catch((error) => console.log("error", error));
   };
-
 
   const handleLogout = async () => {
     try {
@@ -121,12 +124,69 @@ const HomeS = ({ route }) => {
     }
   };
 
+  const padronizarMatricula = (textoBruto) => {
+    if (!textoBruto || textoBruto.trim() === "") return "";
+
+    // Lista de códigos de província (conforme o Artigo 27º do Presidencial n.º 202/16)
+    const codigosNovos = [
+      "BGO", "BIE", "BLA", "CCU", "CDA", "CNE", "CNO", "CSU",
+      "HBO", "HLA", "LDA", "LNO", "LSU", "LTO", "MCO", "MIE",
+      "NBE", "UGE", "ZRE"
+    ];
+
+    // Códigos antigos
+    const codigosAntigos = [
+      "BG", "BL", "BI", "CB", "CC", "CN", "CS", "CU",
+      "HB", "HL", "LD", "LN", "LS", "AN", "MO", "NB", "UI", "ZR"
+    ];
+
+    // Unifica os dois arrays
+    const codigosProvincia = [...codigosNovos, ...codigosAntigos];
+
+    let resultadoEncontrado = "";
+
+    // Para cada código de província
+    for (const codigo of codigosProvincia) {
+      // Procura o código mesmo que tenha letras extras na frente
+      // Ex: "FLDA 97-93-AH" -> encontra "LDA"
+      const regex = new RegExp(`${codigo}[\\s-]?(\\d{2})[\\s-]?(\\d{2})[\\s-]?([A-Z]{2})`, 'i');
+      const match = textoBruto.match(regex);
+
+      if (match) {
+        // Reconstrói no formato oficial: LDA-97-93-AH
+        resultadoEncontrado = `${codigo.toUpperCase()}-${match[1]}-${match[2]}-${match[3].toUpperCase()}`;
+        break;
+      }
+    }
+
+    // Fallback: tenta encontrar qualquer padrão de matrícula no texto
+    if (!resultadoEncontrado) {
+      const fallbackRegex = /([A-Z]{2,3})[\s-]?(\d{2})[\s-]?(\d{2})[\s-]?([A-Z]{2})/i;
+      const fallbackMatch = textoBruto.match(fallbackRegex);
+      if (fallbackMatch) {
+        resultadoEncontrado = `${fallbackMatch[1].toUpperCase()}-${fallbackMatch[2]}-${fallbackMatch[3]}-${fallbackMatch[4].toUpperCase()}`;
+      }
+    }
+
+    if (!resultadoEncontrado) {
+      return textoBruto.trim();
+    }
+
+    // Limpeza
+    let matriculaLimpa = resultadoEncontrado
+      .replace(/\s+/g, '')           // Remove espaços
+      .replace(/-+/g, '-')           // Remove hífens duplicados
+      .replace(/[^\w-]/g, '')        // Remove caracteres especiais
+      .toUpperCase();
+
+    return matriculaLimpa;
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeftSec}>
           <View style={styles.userImage}>
-            <FIcon name="user" size={20} color="#1a90cb8e" />
+            <FIcon name="user" size={20} color="#fff" />
           </View>
           <Text style={styles.headerText}>{user.username}</Text>
         </View>
@@ -155,7 +215,7 @@ const HomeS = ({ route }) => {
       <Text style={styles.text2}>
         {extractedText}
       </Text>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <StatusBar barStyle="ligth-content" backgroundColor="#0087c5db" />
       <View style={styles.footer}>
         <TouchableOpacity style={styles.iconContainer} onPress={pickImageAsync}>
           <FIcon name="image" size={30} color="#1a90cbb4" />
@@ -209,9 +269,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottomWidth: 0.7,
-    borderBottomColor: '#fff'
+    borderBottomColor: '#fff',
 
-    /*
+    
     top: 3,
     backgroundColor: '#0087c5db',
     width: '98%',
@@ -219,7 +279,7 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderTopEndRadius: 10,
     borderTopStartRadius: 10,
-    */
+    
   },
   headerLeftSec: {
     flexDirection: 'row',
@@ -234,13 +294,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#fff',
-    //borderStyle: 'dashed',
+    borderStyle: 'dashed',
   },
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
     /*color: '#1780b5',*/
-    color: '#2d5986',
+    color: '#fff',
     paddingHorizontal: 10,
   },
   text: {
