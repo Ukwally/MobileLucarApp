@@ -1,13 +1,23 @@
 const express = require('express');
 const mysql = require('mysql');
 
-
 const bodyParser = require('body-parser'); // REMOVER
 const cors = require('cors'); // REMOVER
 const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3000;
+//Inicio para child procress de executar python no node
+//SERVIR ARQUIVOS ESTÁTICOS (IMPORTANTE!)
+app.use('/resultado', express.static('../PyAPI/resultado'));
+app.use('/uploads', express.static('uploads'));
+
+const multer = require("multer");
+const { spawn } = require("child_process");
+const upload = multer({ dest: "uploads/" });
+//fim para child procress de executar python no node
+
+
 
 
 // Middlewares
@@ -49,6 +59,33 @@ dbDtser.connect((err) => {
   }
   console.log('Conectado ao banco de dados externo_api');
 });
+
+//EXECUTAR PYTHON
+//inicio para child procress de executar python no node
+app.post("/detect", upload.single("image"), (req, res) => {
+
+  const python = spawn("python", [
+    "../PyAPI/appYolo.py",
+    req.file.path
+  ]);
+
+  let resultado = "";
+
+  python.stdout.on("data", (data) => {
+    resultado += data.toString();
+  });
+
+  python.stderr.on("data", (data) => {
+    console.error(data.toString());
+  });
+
+  python.on("close", () => {
+    res.json(JSON.parse(resultado));
+  });
+
+});
+//fim para child procress de executar python no node
+
 
 //CONSULA DADOS DA VIATURA
 app.get('/data/:matricola', (req, res) => {

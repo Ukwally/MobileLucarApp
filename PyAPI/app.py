@@ -8,7 +8,7 @@ if plate_cascade.empty():
     exit()
 
 # Carregar imagem
-img = cv2.imread('imagem/matricola.jpg')
+img = cv2.imread('imagem/matricola2.jpg')
 
 if img is None:
     print("Erro: Imagem não encontrada.")

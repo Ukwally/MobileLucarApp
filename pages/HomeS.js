@@ -17,6 +17,7 @@ const HomeS = ({ route }) => {
   const [extractedText, setExtractedText] = useState("");
   const navigation = useNavigation();
   const { user } = route.params;
+  //const imagemDetectada = '/resultado/placa_detectada.jpg';
 
   useEffect(() => {
     if (route.params?.capturedImage) {
@@ -45,7 +46,8 @@ const HomeS = ({ route }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
 
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      //mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'], // Nova sintaxe com array
 
       base64: true,
       allowsMultipleSelection: false,
@@ -62,7 +64,8 @@ const HomeS = ({ route }) => {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
 
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      //mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'], // Nova sintaxe com array
       base64: true,
       allowsMultipleSelection: false,
     });
@@ -101,7 +104,7 @@ const HomeS = ({ route }) => {
       .then((result) => {
         //setExtractedText(result["all_text"]); // versão anterior removida para padronizarMatricula antes de setExtractedText
 
-        // ABAIXO ADIONADO PARA padronizarMatricula ANDES DE setExtractedText
+        // ABAIXO ADIONADO PARA padronizarMatricula ANDES DE setExtractedText - Padroniza antes de mostar na tela.
         const textoOCR = result["all_text"];
         const textoPadronizado = padronizarMatricula(textoOCR);
         setExtractedText(textoPadronizado);
@@ -233,8 +236,8 @@ const HomeS = ({ route }) => {
           <Text style={styles.iconText}>Carta</Text>
         </TouchableOpacity>
 
-        {/*
-        <TouchableOpacity style={styles.iconContainer} onPress={takePhotoAsync}>
+        {/*O esboço usa a camera do telemóvel embutida no app lucar. Não usa a camera Nativa*/}
+        {/*<TouchableOpacity style={styles.iconContainer} onPress={takePhotoAsync}>
           <MIcon name="settings" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Esboço</Text>
         </TouchableOpacity>  */}
@@ -243,6 +246,12 @@ const HomeS = ({ route }) => {
           <FIcon name="pencil" size={30} color="#1a90cbb4" />
           <Text style={styles.iconText}>Texto</Text>
         </TouchableOpacity>
+        {/*O Deep vai usar um modelo de IA (Yolo em appYolo.py ou russian em app.py) para recortar a area da placa e enviar para o OCR 
+        <TouchableOpacity style={styles.iconContainer} onPress={()=>navigation.navigate('DeepResult',{imagemDetectada})}>
+          <FIcon name="flash" size={30} color="#1a90cbb4" />
+          <Text style={styles.iconText}>TexteDeep</Text>
+        </TouchableOpacity>
+        */}
       </View>
     </View>
   );
@@ -271,7 +280,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.7,
     borderBottomColor: '#fff',
 
-    
+
     top: 3,
     backgroundColor: '#0087c5db',
     width: '98%',
@@ -279,7 +288,7 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderTopEndRadius: 10,
     borderTopStartRadius: 10,
-    
+
   },
   headerLeftSec: {
     flexDirection: 'row',

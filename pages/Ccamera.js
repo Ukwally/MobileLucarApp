@@ -5,6 +5,8 @@ import { StyleSheet, Text, View, StatusBar, TouchableOpacity } from "react-nativ
 import { useNavigation } from "@react-navigation/native";
 import PhotoManipulator from 'react-native-photo-manipulator';//para recorte
 import AsyncStorage from '@react-native-async-storage/async-storage';// get user
+import FIcon from 'react-native-vector-icons/FontAwesome';
+
 
 
 export default function Ccamera() {
@@ -13,7 +15,6 @@ export default function Ccamera() {
     const [permission, setPermission] = useState(null);
     const cameraRef = useRef(null);
     const navigation = useNavigation();
-
 
     const goHome = async () => {
         //by elisabeth
@@ -92,6 +93,77 @@ export default function Ccamera() {
         }
     };
 
+    const takePhotoDeep = async () => {
+        if (!cameraRef.current || !device) return;
+
+        try {
+            const photo = await cameraRef.current.takePhoto({
+                qualityPrioritization: "balanced",
+            });
+            //const savedUser = await AsyncStorage.getItem('userData');
+            //const user = savedUser ? JSON.parse(savedUser) : null;
+            const fullPath = photo?.path?.startsWith('file://') ? photo.path : `file://${photo.path}`;
+
+            const cropRegion = {
+                x: photo.width * 0.05,
+                y: photo.height * 0.35,
+                width: photo.width * 0.9,
+                height: photo.height * 0.3,
+            };
+            const croppedImage = await PhotoManipulator.crop(fullPath, cropRegion);
+
+            //navigation.navigate("HomeS", {
+            //    capturedImage: croppedImage,
+            //    user: user,
+            //});
+
+            await enviarParaPython(croppedImage);
+
+        } catch (e) {
+            console.log("ERRO AO TIRAR FOTO:", e);
+            Alert.alert("Erro ao tirar foto", e.message);
+        }
+    };
+
+    const enviarParaPython = async (imagePath) => {
+
+        const formData = new FormData();
+
+        formData.append("image", {
+            uri: imagePath,
+            type: "image/jpeg",
+            name: "foto.jpg",
+        });
+        //podia usar o flask, mas vou usar um child process dentro do server.js
+        const response = await fetch("http://192.168.43.22:3000/detect", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        const resultado = await response.json();
+
+        console.log(resultado);
+
+        const savedUser = await AsyncStorage.getItem('userData');
+        const user = savedUser ? JSON.parse(savedUser) : null;
+
+        if (resultado.success) {
+
+            navigation.navigate("DeepResult", {
+                imagemDetectada: resultado.imagem_url,
+                user: user,
+                //enviar o resultado para o DeepResult.js
+                //o resultado é a url da 
+            });
+
+        } else {
+            Alert.alert(resultado.error);
+        }
+    };
+
     if (!permission) return <View></View>;
     if (!device) return <View></View>;
 
@@ -130,6 +202,12 @@ export default function Ccamera() {
                     alignSelf: 'center'
                 }}
             />
+            <TouchableOpacity
+                style={styles.iconContainer}
+                onPress={takePhotoDeep}
+            />
+
+
         </View>
     );
 };
@@ -176,5 +254,14 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: '#a9cce3', // Cor do contorno do retângulo
         backgroundColor: 'transparent', // Transparente para ser apenas o contorno
+    },
+
+    iconContainer: {
+        alignItems: 'center',
+    },
+    iconText: {
+        marginTop: 5,
+        fontSize: 12,
+        color: '#0c405a'
     },
 });

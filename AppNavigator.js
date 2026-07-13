@@ -11,6 +11,7 @@ import VisualizarCidadao from './pages/VisualizarCidadao';
 import VisualizarCarta from './pages/VisualizarCarta';
 import Ccamera from './pages/Ccamera';
 import Pesquisar from './pages/Pesquisar';
+import DeepResult from './pages/DeepResult';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ const AppNavigator = () => {
         <Stack.Screen name="VisualizarCarta" component={VisualizarCarta} options={{ headerShown: false }} />
         <Stack.Screen name="Ccamera" component={Ccamera} options={{ headerShown: false }} />
         <Stack.Screen name="Pesquisar" component={Pesquisar} options={{ headerShown: false }} />
+        <Stack.Screen name="DeepResult" component={DeepResult} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
